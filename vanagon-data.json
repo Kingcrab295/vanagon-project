@@ -19,7 +19,7 @@
           "id": "9b47vqt",
           "name": "Colour repair — driver side panel",
           "note": "Rust treatment first",
-          "status": "inprogress"
+          "status": "done"
         },
         {
           "id": "pp1h97x",
@@ -51,13 +51,13 @@
           "id": "wi6x22s",
           "name": "Rock & Roll bed frame",
           "note": "Custom build in progress",
-          "status": "inprogress"
+          "status": "done"
         },
         {
           "id": "kn8r72x",
           "name": "Bed upholstery",
           "note": "",
-          "status": "todo"
+          "status": "done"
         },
         {
           "id": "oohbbih",
@@ -564,5 +564,5 @@
       "type": "manual"
     }
   ],
-  "syncedAt": "2026-04-09T10:18:01.271Z"
+  "syncedAt": "2026-04-09T10:18:14.656Z"
 }
