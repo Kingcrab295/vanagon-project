@@ -1,31 +1,40 @@
 {
   "phases": [
     {
-      "id": "7eomb0y",
+      "id": "149sysc",
       "name": "Bodywork & paint",
       "open": true,
-      "photos": [],
+      "photos": [
+        {
+          "id": "cihumal",
+          "tag": "before",
+          "data": "[photo_local]",
+          "caption": "",
+          "name": "153897_0.jpg",
+          "date": "2026-04-09"
+        }
+      ],
       "tasks": [
         {
-          "id": "60n2ps4",
+          "id": "9b47vqt",
           "name": "Colour repair — driver side panel",
           "note": "Rust treatment first",
           "status": "done"
         },
         {
-          "id": "n0xsv8t",
+          "id": "pp1h97x",
           "name": "Colour repair — rear bumper",
           "note": "",
-          "status": "done"
+          "status": "todo"
         },
         {
-          "id": "7fhke8g",
+          "id": "3q76flr",
           "name": "Surface prep & primer",
           "note": "",
-          "status": "done"
+          "status": "todo"
         },
         {
-          "id": "hxs4h72",
+          "id": "rctzfmp",
           "name": "Full respray decision",
           "note": "Partial or full repaint?",
           "status": "todo"
@@ -33,37 +42,37 @@
       ]
     },
     {
-      "id": "ai2ic72",
+      "id": "foizqb8",
       "name": "Interior build",
       "open": true,
       "photos": [],
       "tasks": [
         {
-          "id": "dx0uhmo",
+          "id": "wi6x22s",
           "name": "Rock & Roll bed frame",
           "note": "Custom build in progress",
-          "status": "inprogress"
+          "status": "done"
         },
         {
-          "id": "kvijmjp",
+          "id": "kn8r72x",
           "name": "Bed upholstery",
           "note": "",
-          "status": "todo"
+          "status": "done"
         },
         {
-          "id": "l4e76m3",
+          "id": "oohbbih",
           "name": "Flooring",
           "note": "Vinyl plank or marine carpet",
           "status": "todo"
         },
         {
-          "id": "k4k1e1e",
+          "id": "9c3cirs",
           "name": "Storage cabinets",
           "note": "",
           "status": "todo"
         },
         {
-          "id": "hsachff",
+          "id": "a36am9f",
           "name": "Wall cladding & insulation",
           "note": "",
           "status": "todo"
@@ -71,31 +80,31 @@
       ]
     },
     {
-      "id": "ilnszdr",
+      "id": "lfgwl7i",
       "name": "Electrical & power",
       "open": false,
       "photos": [],
       "tasks": [
         {
-          "id": "8jjru4u",
+          "id": "nm44eju",
           "name": "Secondary 12V battery",
           "note": "",
           "status": "todo"
         },
         {
-          "id": "6xvfixc",
+          "id": "c5e1pak",
           "name": "USB charging points",
           "note": "",
           "status": "todo"
         },
         {
-          "id": "np4386v",
+          "id": "sefdj5r",
           "name": "LED interior lighting",
           "note": "",
           "status": "todo"
         },
         {
-          "id": "r8zcid5",
+          "id": "dc0ftut",
           "name": "Solar panel roof mount",
           "note": "",
           "status": "todo"
@@ -103,31 +112,31 @@
       ]
     },
     {
-      "id": "2qsltxu",
+      "id": "r1oy4tb",
       "name": "Mechanical",
       "open": false,
       "photos": [],
       "tasks": [
         {
-          "id": "abo8j77",
+          "id": "9339udt",
           "name": "Full engine service",
           "note": "Oil, plugs, air filter, belts",
           "status": "todo"
         },
         {
-          "id": "3grwwxe",
+          "id": "kn78cc1",
           "name": "Coolant system check",
           "note": "Wasserboxer — critical!",
           "status": "todo"
         },
         {
-          "id": "kabnewq",
+          "id": "1ko0okx",
           "name": "Brake inspection",
           "note": "",
           "status": "todo"
         },
         {
-          "id": "u6co433",
+          "id": "tvu03zh",
           "name": "Tyre check / replace",
           "note": "",
           "status": "todo"
@@ -145,7 +154,7 @@
   ],
   "gear": [
     {
-      "id": "moictss",
+      "id": "l0ije5u",
       "cat": "Sleeping & comfort",
       "name": "Cotton sheet set",
       "note": "Lightweight",
@@ -156,7 +165,7 @@
       "actual": 0
     },
     {
-      "id": "jxnf6vb",
+      "id": "wsej5p4",
       "cat": "Sleeping & comfort",
       "name": "Sleeping bag liner",
       "note": "Highlands nights ~15°C",
@@ -167,7 +176,7 @@
       "actual": 0
     },
     {
-      "id": "cnujzcb",
+      "id": "psqr8y9",
       "cat": "Sleeping & comfort",
       "name": "Compressible pillow x2",
       "note": "",
@@ -178,7 +187,7 @@
       "actual": 0
     },
     {
-      "id": "gtd2bit",
+      "id": "hivmb8e",
       "cat": "Sleeping & comfort",
       "name": "Blackout window covers",
       "note": "Magnetic or suction-cup",
@@ -189,7 +198,7 @@
       "actual": 0
     },
     {
-      "id": "x20fwz3",
+      "id": "sgstl7r",
       "cat": "Sleeping & comfort",
       "name": "USB fan (12V)",
       "note": "Essential for still lowland nights",
@@ -200,7 +209,7 @@
       "actual": 0
     },
     {
-      "id": "aqfdosg",
+      "id": "5e7s8ha",
       "cat": "Sleeping & comfort",
       "name": "Mosquito net",
       "note": "",
@@ -211,7 +220,7 @@
       "actual": 0
     },
     {
-      "id": "pikn8va",
+      "id": "rnle645",
       "cat": "Kitchen & cooking",
       "name": "Single burner butane stove",
       "note": "Gas at every 7-Eleven",
@@ -222,7 +231,7 @@
       "actual": 0
     },
     {
-      "id": "3rmkrwj",
+      "id": "9lgjnfj",
       "cat": "Kitchen & cooking",
       "name": "Cookpot + lid (1.5L)",
       "note": "Titanium saves weight",
@@ -233,7 +242,7 @@
       "actual": 0
     },
     {
-      "id": "qllr2n1",
+      "id": "z2xm5xf",
       "cat": "Kitchen & cooking",
       "name": "Foldable pan 20cm",
       "note": "",
@@ -244,7 +253,7 @@
       "actual": 0
     },
     {
-      "id": "i9aqj9i",
+      "id": "594ukqi",
       "cat": "Kitchen & cooking",
       "name": "Spork set x2",
       "note": "",
@@ -255,7 +264,7 @@
       "actual": 0
     },
     {
-      "id": "3mju1zh",
+      "id": "9qacfy1",
       "cat": "Kitchen & cooking",
       "name": "Flexible cutting board",
       "note": "",
@@ -266,7 +275,7 @@
       "actual": 0
     },
     {
-      "id": "vgx661h",
+      "id": "3pqzp9n",
       "cat": "Kitchen & cooking",
       "name": "Collapsible water container 10L",
       "note": "",
@@ -277,7 +286,7 @@
       "actual": 0
     },
     {
-      "id": "vwxj6z8",
+      "id": "yd7zusg",
       "cat": "Coffee kit",
       "name": "Flair Pro 3",
       "note": "",
@@ -288,7 +297,7 @@
       "actual": 0
     },
     {
-      "id": "sbvnqj6",
+      "id": "9srvqmh",
       "cat": "Coffee kit",
       "name": "EZpresso",
       "note": "Backup / light days",
@@ -299,7 +308,7 @@
       "actual": 0
     },
     {
-      "id": "zz5qaq8",
+      "id": "opnnnog",
       "cat": "Coffee kit",
       "name": "Hand grinder (Timemore C3)",
       "note": "No power needed",
@@ -310,7 +319,7 @@
       "actual": 0
     },
     {
-      "id": "fxbfbed",
+      "id": "wjmbvzv",
       "cat": "Coffee kit",
       "name": "Stovetop gooseneck kettle",
       "note": "Gas-compatible",
@@ -321,7 +330,7 @@
       "actual": 0
     },
     {
-      "id": "smvb6r8",
+      "id": "qaxuvey",
       "cat": "Coffee kit",
       "name": "Pocket digital scale",
       "note": "0.1g resolution",
@@ -332,7 +341,7 @@
       "actual": 0
     },
     {
-      "id": "9so3nyk",
+      "id": "qn1hgr9",
       "cat": "Coffee kit",
       "name": "Airtight bean tin",
       "note": "250–500g",
@@ -343,7 +352,7 @@
       "actual": 0
     },
     {
-      "id": "u6njbn5",
+      "id": "40wqop5",
       "cat": "Power & lighting",
       "name": "Portable power station 300Wh",
       "note": "e.g. Jackery 300",
@@ -354,7 +363,7 @@
       "actual": 0
     },
     {
-      "id": "a5sdxll",
+      "id": "m7nvqgs",
       "cat": "Power & lighting",
       "name": "USB multi-port car charger",
       "note": "",
@@ -365,7 +374,7 @@
       "actual": 0
     },
     {
-      "id": "df6acoi",
+      "id": "ijfw7wd",
       "cat": "Power & lighting",
       "name": "LED string lights USB",
       "note": "Van interior vibes",
@@ -376,7 +385,7 @@
       "actual": 0
     },
     {
-      "id": "cg31a5w",
+      "id": "ows63lg",
       "cat": "Power & lighting",
       "name": "Headlamp x2",
       "note": "",
@@ -387,7 +396,7 @@
       "actual": 0
     },
     {
-      "id": "cttocv6",
+      "id": "g8njcyl",
       "cat": "Power & lighting",
       "name": "Solar panel 60–100W",
       "note": "Roof mount",
@@ -398,7 +407,7 @@
       "actual": 0
     },
     {
-      "id": "hatf5r7",
+      "id": "kqarupv",
       "cat": "Outdoor living",
       "name": "Camp chairs x2",
       "note": "Foldable lightweight",
@@ -409,7 +418,7 @@
       "actual": 0
     },
     {
-      "id": "ltc26jq",
+      "id": "u9j21tz",
       "cat": "Outdoor living",
       "name": "Small folding table",
       "note": "Coffee prep station outside",
@@ -420,7 +429,7 @@
       "actual": 0
     },
     {
-      "id": "zafp8b9",
+      "id": "qcogogl",
       "cat": "Outdoor living",
       "name": "Tarp / rain canopy 3×3m",
       "note": "Thai rain is INSTANT",
@@ -431,7 +440,7 @@
       "actual": 0
     },
     {
-      "id": "6x8kaao",
+      "id": "5p7glzb",
       "cat": "Outdoor living",
       "name": "Paracord 20m",
       "note": "Tarp rigging + clothesline",
@@ -442,7 +451,7 @@
       "actual": 0
     },
     {
-      "id": "7g5px8i",
+      "id": "04fmawy",
       "cat": "Van essentials",
       "name": "T3 basic tool kit",
       "note": "Plugs, fuses, zip ties, belts",
@@ -453,7 +462,7 @@
       "actual": 0
     },
     {
-      "id": "61fw8fb",
+      "id": "a7dsxdj",
       "cat": "Van essentials",
       "name": "Compact jump starter",
       "note": "Vintage van — be prepared!",
@@ -464,7 +473,7 @@
       "actual": 0
     },
     {
-      "id": "74to4bt",
+      "id": "s7uh6xi",
       "cat": "Van essentials",
       "name": "Tyre repair kit + 12V pump",
       "note": "",
@@ -475,7 +484,7 @@
       "actual": 0
     },
     {
-      "id": "281dzje",
+      "id": "obx31p4",
       "cat": "Van essentials",
       "name": "First aid kit",
       "note": "",
@@ -486,7 +495,7 @@
       "actual": 0
     },
     {
-      "id": "adyub18",
+      "id": "awxt9j6",
       "cat": "Van essentials",
       "name": "DEET insect repellent",
       "note": "Forest / water areas",
@@ -497,7 +506,7 @@
       "actual": 0
     },
     {
-      "id": "75fqtgw",
+      "id": "moct3aa",
       "cat": "Van essentials",
       "name": "Sunscreen SPF50+ x2",
       "note": "",
@@ -508,7 +517,7 @@
       "actual": 0
     },
     {
-      "id": "79vto3n",
+      "id": "l0vi3hs",
       "cat": "Van essentials",
       "name": "Wet wipes bulk",
       "note": "Outdoor shower substitute",
@@ -521,7 +530,7 @@
   ],
   "stops": [
     {
-      "id": "geutk60",
+      "id": "bgtoers",
       "name": "Pai",
       "region": "North",
       "notes": "762 bends — allow extra T3 time!\nWarm springs nearby. Bamboo bridge. TikTok sunsets.",
@@ -529,7 +538,7 @@
       "photos": []
     },
     {
-      "id": "u3ralza",
+      "id": "79u20gv",
       "name": "Mae Hong Son",
       "region": "North",
       "notes": "Remote and magical. Morning mist over the lake. Kew Kan Pae viewpoint.",
@@ -537,7 +546,7 @@
       "photos": []
     },
     {
-      "id": "tjxra1j",
+      "id": "uh0hxiv",
       "name": "Chiang Rai",
       "region": "North",
       "notes": "White Temple + Blue Temple. Hill tribe coffee farms — perfect for a coffee TikTok.",
@@ -547,7 +556,7 @@
   ],
   "milestones": [
     {
-      "id": "qy9w8eo",
+      "id": "plrllyq",
       "title": "Project kickoff! 🚐",
       "date": "2025-01-15",
       "note": "Officially decided to make the Vanagon dream happen. The journey begins.",
@@ -555,5 +564,5 @@
       "type": "manual"
     }
   ],
-  "syncedAt": "2026-04-09T10:23:19.146Z"
+  "syncedAt": "2026-04-09T10:24:11.976Z"
 }
