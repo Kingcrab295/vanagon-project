@@ -283,6 +283,18 @@ main{max-width:940px;margin:0 auto;padding:28px 16px calc(80px + var(--sab));}
 .drag-over{border-top:3px solid var(--orange)!important;}
 .drag-ghost{position:fixed;pointer-events:none;opacity:.85;z-index:9000;border-radius:var(--r);background:var(--card);border:2px solid var(--orange);padding:10px 14px;font-family:'Lilita One',cursive;font-size:15px;color:var(--ink);box-shadow:4px 4px 0 var(--orange);max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
+/* SYNC STATUS */
+.sync-btn{position:relative;}
+.sync-dot{width:8px;height:8px;border-radius:50%;position:absolute;top:0;right:0;border:2px solid var(--ink);}
+.sync-dot.ok{background:var(--green);}
+.sync-dot.err{background:var(--red);}
+.sync-dot.syncing{background:var(--yellow);animation:pulse .8s infinite;}
+.sync-dot.off{background:var(--ink3);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.sync-modal-section{margin-top:14px;padding-top:14px;border-top:1.5px dashed var(--card-border);}
+.sync-status-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);margin-bottom:8px;}
+.sync-status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
 /* EXPORT/IMPORT MODAL */
 #modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:8000;align-items:center;justify-content:center;}
 #modal-overlay.show{display:flex;}
@@ -444,6 +456,7 @@ main{max-width:940px;margin:0 auto;padding:28px 16px calc(80px + var(--sab));}
     <button onclick="switchTab('timeline')">📸 Timeline</button>
   </nav>
   <div class="header-actions">
+    <button class="icon-btn sync-btn" onclick="openModal()" id="sync-btn" title="Sync status">☁️<span class="sync-dot off" id="sync-dot"></span></button>
     <button class="icon-btn" onclick="toggleDark()" id="dark-btn" title="Toggle dark mode">🌙</button>
     <button class="icon-btn" onclick="openModal()" title="Export / Import">💾</button>
   </div>
@@ -593,15 +606,49 @@ main{max-width:940px;margin:0 auto;padding:28px 16px calc(80px + var(--sab));}
 
 <!-- EXPORT/IMPORT MODAL -->
 <div id="modal-overlay">
-  <div class="modal" style="position:relative">
+  <div class="modal" style="position:relative;max-height:90vh;overflow-y:auto;">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-title">💾 Export / Import</div>
-    <p style="font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:12px">Export saves all your data as a JSON file. Import loads data back — this will overwrite your current data.</p>
-    <div class="modal-actions">
-      <button class="btn btn-p" onclick="exportData()">⬇ Export JSON</button>
-      <button class="btn btn-g" onclick="document.getElementById('import-file').click()">⬆ Import JSON</button>
+    <div class="modal-title">☁️ Sync &amp; Backup</div>
+
+    <!-- GITHUB SYNC SECTION -->
+    <div style="margin-bottom:4px">
+      <div style="font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:8px">GitHub Sync</div>
+      <div class="sync-status-row">
+        <div class="sync-status-dot" id="modal-sync-dot" style="background:var(--ink3)"></div>
+        <span id="modal-sync-label">Not connected</span>
+      </div>
+      <div style="font-size:12px;color:var(--ink3);margin-bottom:10px;line-height:1.6">
+        Syncs text data (phases, gear, stops) to <strong>Kingcrab295/vanagon-project</strong>.<br>
+        Photos stay local (too big for GitHub).
+      </div>
+      <div class="form-field" style="margin-bottom:8px">
+        <div class="form-label">GitHub Personal Access Token (PAT)</div>
+        <div style="display:flex;gap:8px">
+          <input class="fi fi-grow" type="password" id="pat-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+          <button class="btn btn-p btn-sm" onclick="savePAT()">Save</button>
+        </div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:4px">
+          GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → scope: <strong>repo</strong>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-p btn-sm" onclick="syncNow()">⬆ Sync now</button>
+        <button class="btn btn-g btn-sm" onclick="pullFromGithub()">⬇ Pull from GitHub</button>
+        <button class="btn btn-d btn-sm" onclick="clearPAT()">Clear PAT</button>
+      </div>
+      <div id="sync-last" style="font-family:'Space Mono',monospace;font-size:10px;color:var(--ink3);margin-top:8px"></div>
     </div>
-    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)" />
+
+    <!-- EXPORT / IMPORT SECTION -->
+    <div class="sync-modal-section">
+      <div style="font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:8px">Local Backup (includes photos)</div>
+      <p style="font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:10px">Export saves everything including photos as a JSON file.</p>
+      <div class="modal-actions">
+        <button class="btn btn-p btn-sm" onclick="exportData()">⬇ Export JSON</button>
+        <button class="btn btn-g btn-sm" onclick="document.getElementById('import-file').click()">⬆ Import JSON</button>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)" />
+    </div>
   </div>
 </div>
 
@@ -622,6 +669,166 @@ function fmt(n){return'฿'+(Math.round(n||0)).toLocaleString();}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300);}
 function today(){return new Date().toISOString().slice(0,10);}
 function fmtDate(d){if(!d)return'';try{const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}catch{return d;}}
+
+// ── GITHUB SYNC ───────────────────────────────────────────────────
+const GH={
+  owner:'Kingcrab295',
+  repo:'vanagon-project',
+  file:'vanagon-data.json',
+  get pat(){return localStorage.getItem('vp_pat')||'';},
+  get api(){return`https://api.github.com/repos/${this.owner}/${this.repo}/contents/${this.file}`;}
+};
+
+let _syncSha=null; // current file SHA needed for updates
+
+function setSyncStatus(state, msg){
+  const dot=document.getElementById('sync-dot');
+  const mdot=document.getElementById('modal-sync-dot');
+  const mlbl=document.getElementById('modal-sync-label');
+  const colors={ok:'var(--green)',err:'var(--red)',syncing:'var(--yellow)',off:'var(--ink3)'};
+  if(dot){dot.className='sync-dot '+state;}
+  if(mdot){mdot.style.background=colors[state]||colors.off;}
+  if(mlbl){mlbl.textContent=msg;}
+}
+
+function updateSyncLastTime(){
+  const el=document.getElementById('sync-last');
+  if(!el)return;
+  const t=localStorage.getItem('vp_last_sync');
+  el.textContent=t?'Last synced: '+new Date(t).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'Never synced';
+}
+
+function getTextData(){
+  // Only text data — no photos (strip them out to keep file small)
+  const cleanPhases=phases.map(p=>({...p,photos:(p.photos||[]).map(ph=>({...ph,data:'[photo_local]'}))}));
+  const cleanStops=stops.map(s=>({...s,photos:(s.photos||[]).map(ph=>({...ph,data:'[photo_local]'}))}));
+  const cleanMilestones=milestones.map(m=>({...m,photos:(m.photos||[]).map(ph=>({...ph,data:'[photo_local]'}))}));
+  return {phases:cleanPhases,gearCats,gear,stops:cleanStops,milestones:cleanMilestones,syncedAt:new Date().toISOString()};
+}
+
+async function syncNow(silent=false){
+  if(!GH.pat){
+    if(!silent)toast('No PAT set — open ☁️ to add one');
+    setSyncStatus('off','No PAT configured');
+    return;
+  }
+  setSyncStatus('syncing','Syncing…');
+  if(!silent)toast('Syncing to GitHub…');
+  try{
+    // Get current SHA if we don't have it
+    if(!_syncSha){
+      const r=await fetch(GH.api,{headers:{Authorization:`token ${GH.pat}`,Accept:'application/vnd.github.v3+json'}});
+      if(r.ok){const d=await r.json();_syncSha=d.sha;}
+      else if(r.status!==404){throw new Error('GitHub API error: '+r.status);}
+    }
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(getTextData(),null,2))));
+    const body={message:'Vanagon data sync '+new Date().toISOString(),content};
+    if(_syncSha)body.sha=_syncSha;
+    const res=await fetch(GH.api,{
+      method:'PUT',
+      headers:{Authorization:`token ${GH.pat}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    if(!res.ok){
+      const err=await res.json();
+      throw new Error(err.message||'Push failed: '+res.status);
+    }
+    const data=await res.json();
+    _syncSha=data.content?.sha||_syncSha;
+    localStorage.setItem('vp_last_sync',new Date().toISOString());
+    setSyncStatus('ok','Synced ✓');
+    updateSyncLastTime();
+    if(!silent)toast('Synced to GitHub ✓');
+  }catch(e){
+    console.error('Sync error:',e);
+    setSyncStatus('err','Sync failed: '+e.message);
+    if(!silent)toast('Sync failed 😅 — check PAT');
+  }
+}
+
+async function pullFromGithub(){
+  if(!GH.pat){toast('No PAT set');return;}
+  setSyncStatus('syncing','Pulling…');
+  toast('Pulling from GitHub…');
+  try{
+    const r=await fetch(GH.api+'?t='+Date.now(),{
+      headers:{Authorization:`token ${GH.pat}`,Accept:'application/vnd.github.v3+json'}
+    });
+    if(r.status===404){toast('No data file on GitHub yet — sync first');setSyncStatus('off','No remote data');return;}
+    if(!r.ok)throw new Error('Pull failed: '+r.status);
+    const d=await r.json();
+    _syncSha=d.sha;
+    const text=decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))));
+    const remote=JSON.parse(text);
+    if(!confirm('Replace local data with GitHub version?\n\nLocal photos will be kept.'))return;
+    // Merge: use remote text data but preserve local photos
+    const localPhaseMap=Object.fromEntries(phases.map(p=>[p.id,p.photos||[]]));
+    const localStopMap=Object.fromEntries(stops.map(s=>[s.id,s.photos||[]]));
+    const localMilestoneMap=Object.fromEntries(milestones.map(m=>[m.id,m.photos||[]]));
+    if(remote.phases){phases=remote.phases.map(p=>({...p,photos:localPhaseMap[p.id]||[]}));}
+    if(remote.gearCats)gearCats=remote.gearCats;
+    if(remote.gear)gear=remote.gear;
+    if(remote.stops){stops=remote.stops.map(s=>({...s,photos:localStopMap[s.id]||[]}));}
+    if(remote.milestones){milestones=remote.milestones.map(m=>({...m,photos:localMilestoneMap[m.id]||[]}));}
+    S.set('vp4_phases',phases);S.set('vp4_gearCats',gearCats);S.set('vp4_gear',gear);
+    S.set('vp4_stops',stops);S.set('vp4_milestones',milestones);
+    renderPhases();renderGear();renderStops();
+    setSyncStatus('ok','Pulled ✓');
+    localStorage.setItem('vp_last_sync',new Date().toISOString());
+    updateSyncLastTime();
+    toast('Pulled from GitHub ✓ — photos kept local');
+  }catch(e){
+    console.error('Pull error:',e);
+    setSyncStatus('err','Pull failed');
+    toast('Pull failed 😅 — '+e.message);
+  }
+}
+
+function savePAT(){
+  const val=document.getElementById('pat-input').value.trim();
+  if(!val){toast('Enter your PAT first');return;}
+  localStorage.setItem('vp_pat',val);
+  document.getElementById('pat-input').value='';
+  toast('PAT saved 🔑');
+  setSyncStatus('off','PAT saved — tap Sync now');
+  syncNow();
+}
+
+function clearPAT(){
+  if(!confirm('Remove saved PAT?'))return;
+  localStorage.removeItem('vp_pat');
+  _syncSha=null;
+  setSyncStatus('off','PAT cleared');
+  toast('PAT removed');
+}
+
+// Auto-sync after every save — debounced 3s so rapid changes batch together
+let _autoSyncTimer=null;
+function scheduleSync(){
+  if(!GH.pat)return;
+  clearTimeout(_autoSyncTimer);
+  _autoSyncTimer=setTimeout(()=>syncNow(true),3000);
+}
+
+// Init sync on load
+function initSync(){
+  const inp=document.getElementById('pat-input');
+  if(GH.pat&&inp)inp.placeholder='••••••••••••••••••••••• (saved)';
+  updateSyncLastTime();
+  if(GH.pat){
+    setSyncStatus('syncing','Checking…');
+    // Pull on load to get latest, then set SHA
+    fetch(GH.api+'?t='+Date.now(),{headers:{Authorization:`token ${GH.pat}`,Accept:'application/vnd.github.v3+json'}})
+      .then(r=>{if(r.ok)return r.json();throw new Error(r.status);})
+      .then(d=>{_syncSha=d.sha;setSyncStatus('ok','Connected ✓');updateSyncLastTime();})
+      .catch(e=>{
+        if(e.message==='404')setSyncStatus('off','Ready — no data yet');
+        else setSyncStatus('err','Check PAT');
+      });
+  } else {
+    setSyncStatus('off','No PAT configured');
+  }
+}
 
 // ── DARK MODE ─────────────────────────────────────────────────────
 let darkMode=S.get('vp_dark',false);
@@ -720,7 +927,7 @@ function switchTab(name){
 }
 
 // ════════ RENOVATION ══════════════════════════════════════════════
-function savePhases(){S.set('vp4_phases',phases);}
+function savePhases(){S.set('vp4_phases',phases);scheduleSync();}
 function renderPhases(){
   const c=document.getElementById('phases-list');c.innerHTML='';
   let total=0,done=0;
@@ -866,7 +1073,7 @@ function deleteLbPhoto(){
 }
 
 // ════════ GEAR ════════════════════════════════════════════════════
-function saveGear(){S.set('vp4_gear',gear);S.set('vp4_gearCats',gearCats);}
+function saveGear(){S.set('vp4_gear',gear);S.set('vp4_gearCats',gearCats);scheduleSync();}
 function populateCatSel(){const sel=document.getElementById('ng-cat');if(!sel)return;sel.innerHTML=gearCats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');}
 function renderGear(){
   populateCatSel();
@@ -958,7 +1165,7 @@ function delGearItem(id){gear=gear.filter(g=>g.id!==id);saveGear();renderGear();
 function delGearCat(cat){if(!confirm(`Delete "${cat}" and all items in it?`))return;gear=gear.filter(g=>g.cat!==cat);gearCats=gearCats.filter(c=>c!==cat);saveGear();renderGear();toast('Category removed');}
 
 // ════════ JOURNEY ══════════════════════════════════════════════════
-function saveStops(){S.set('vp4_stops',stops);}
+function saveStops(){S.set('vp4_stops',stops);scheduleSync();}
 const regionClass={North:'region-north',Northeast:'region-northeast',South:'region-south',Central:'region-central',Other:'region-other'};
 let _prevVisited=stops.filter(s=>s.status==='visited').length;
 function renderStops(){
@@ -1041,7 +1248,7 @@ function delStop(id){stops=stops.filter(s=>s.id!==id);saveStops();renderStops();
 function moveStop(id,dir){const i=stops.findIndex(s=>s.id===id),ni=i+dir;if(ni<0||ni>=stops.length)return;[stops[i],stops[ni]]=[stops[ni],stops[i]];saveStops();renderStops();}
 
 // ════════ TIMELINE ══════════════════════════════════════════════════
-function saveMilestones(){S.set('vp4_milestones',milestones);}
+function saveMilestones(){S.set('vp4_milestones',milestones);scheduleSync();}
 
 function buildTimelineEntries(){
   // Auto-pull: phase photos with date
@@ -1156,7 +1363,12 @@ function fireConfetti(){
 }
 
 // ════════ EXPORT / IMPORT ══════════════════════════════════════════
-function openModal(){document.getElementById('modal-overlay').classList.add('show');}
+function openModal(){
+  document.getElementById('modal-overlay').classList.add('show');
+  updateSyncLastTime();
+  const inp=document.getElementById('pat-input');
+  if(GH.pat&&inp)inp.placeholder='••••••••••••••••••••• (saved)';
+}
 function closeModal(){document.getElementById('modal-overlay').classList.remove('show');}
 document.getElementById('modal-overlay').onclick=function(e){if(e.target===this)closeModal();};
 
@@ -1291,6 +1503,7 @@ function endDrag(x, y){
 renderPhases();
 renderGear();
 renderStops();
+initSync();
 
 // ════════ SERVICE WORKER — inline blob, no separate sw.js needed ════
 if('serviceWorker' in navigator){
