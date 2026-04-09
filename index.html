@@ -1,40 +1,3 @@
-const CACHE = 'vanagon-v1';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  'https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap'
-];
-
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(ASSETS).catch(() => {}))
-  );
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
-  );
-  self.clients.claim();
-});
-
-self.addEventListener('fetch', e => {
-  // Cache-first for same-origin, network-first for fonts/external
-  if (e.request.url.startsWith(self.location.origin)) {
-    e.respondWith(
-      caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
-        const clone = res.clone();
-        caches.open(CACHE).then(cache => cache.put(e.request, clone));
-        return res;
-      }))
-    );
-  }
-});
-
 {
   "name": "Vanagon Project",
   "short_name": "Vanagon",
@@ -108,7 +71,8 @@ self.addEventListener('fetch', e => {
   --shadow-h:5px 5px 0px #0A0908;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Nunito','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;transition:background .3s,color .3s;}
+html{overflow-x:hidden;width:100%;}
+body{font-family:'Nunito','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;transition:background .3s,color .3s;overflow-x:hidden;width:100%;position:relative;}
 body:not([data-dark]){background-image:radial-gradient(circle,#DDD5BE 1px,transparent 1px);background-size:28px 28px;}
 body[data-dark]{background-image:radial-gradient(circle,#2C2920 1px,transparent 1px);background-size:28px 28px;}
 
@@ -1242,3 +1206,40 @@ if('serviceWorker' in navigator){
 </script>
 </body>
 </html>
+
+const CACHE = 'vanagon-v1';
+const ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  'https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap'
+];
+
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(cache => cache.addAll(ASSETS).catch(() => {}))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', e => {
+  // Cache-first for same-origin, network-first for fonts/external
+  if (e.request.url.startsWith(self.location.origin)) {
+    e.respondWith(
+      caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
+        const clone = res.clone();
+        caches.open(CACHE).then(cache => cache.put(e.request, clone));
+        return res;
+      }))
+    );
+  }
+});
