@@ -1,0 +1,1131 @@
+const CACHE = 'vanagon-v1';
+const ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  'https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap'
+];
+
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(cache => cache.addAll(ASSETS).catch(() => {}))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', e => {
+  // Cache-first for same-origin, network-first for fonts/external
+  if (e.request.url.startsWith(self.location.origin)) {
+    e.respondWith(
+      caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
+        const clone = res.clone();
+        caches.open(CACHE).then(cache => cache.put(e.request, clone));
+        return res;
+      }))
+    );
+  }
+});
+
+{
+  "name": "Vanagon Project",
+  "short_name": "Vanagon",
+  "description": "VW T3 renovation tracker, gear list, and road trip journal",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#1C1A14",
+  "theme_color": "#1C1A14",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Vanagon">
+<meta name="theme-color" content="#1C1A14">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<title>🚐 Vanagon Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sat:env(safe-area-inset-top);--sab:env(safe-area-inset-bottom);
+  --bg:#FDFAF4;--bg2:#F5EFE0;--bg3:#EDE4CE;
+  --ink:#1C1A14;--ink2:#5C5640;--ink3:#A09878;
+  --card:#ffffff;--card-border:#DDD5BE;
+  --orange:#F26419;--orange-lt:#FEE8D6;
+  --yellow:#F7C948;--yellow-lt:#FEF7D6;
+  --teal:#2A9D8F;--teal-lt:#D4F1EE;
+  --pink:#E07A9C;--pink-lt:#FDEEF4;
+  --green:#3A7D44;--green-lt:#D8EFDB;
+  --red:#D94F3D;--red-lt:#FDECEA;
+  --blue:#3B82F6;--blue-lt:#EFF6FF;
+  --purple:#7C3AED;--purple-lt:#F5F3FF;
+  --shadow:3px 3px 0px var(--card-border);
+  --shadow-h:5px 5px 0px #C8BFA8;
+  --r:12px;
+  --header-h:60px;
+}
+[data-dark] {
+  --bg:#1A1814;--bg2:#232118;--bg3:#2C2920;
+  --ink:#F5F0E8;--ink2:#C4B99A;--ink3:#7A7060;
+  --card:#242018;--card-border:#3A3628;
+  --orange:#F26419;--orange-lt:#3A2010;
+  --yellow:#F7C948;--yellow-lt:#2E2608;
+  --teal:#2A9D8F;--teal-lt:#0C2E2A;
+  --pink:#E07A9C;--pink-lt:#2E1020;
+  --green:#3A7D44;--green-lt:#0E2214;
+  --red:#D94F3D;--red-lt:#2E0E0A;
+  --blue:#3B82F6;--blue-lt:#0E1830;
+  --purple:#7C3AED;--purple-lt:#180E30;
+  --shadow:3px 3px 0px #0A0908;
+  --shadow-h:5px 5px 0px #0A0908;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;transition:background .3s,color .3s;}
+body:not([data-dark]){background-image:radial-gradient(circle,#DDD5BE 1px,transparent 1px);background-size:28px 28px;}
+body[data-dark]{background-image:radial-gradient(circle,#2C2920 1px,transparent 1px);background-size:28px 28px;}
+
+/* HEADER */
+header{background:var(--ink);padding:0 20px;padding-top:var(--sat);min-height:calc(var(--header-h) + var(--sat));display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200;border-bottom:3px solid var(--orange);}
+.logo{font-family:'Lilita One',cursive;font-size:20px;color:var(--yellow);flex-shrink:0;white-space:nowrap;}
+nav{display:flex;gap:4px;margin-left:auto;flex-wrap:nowrap;overflow-x:auto;}
+nav::-webkit-scrollbar{display:none;}
+nav button{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:99px;border:2px solid rgba(255,255,255,.18);background:transparent;color:rgba(255,255,255,.5);cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;}
+nav button.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+nav button:hover:not(.active){border-color:var(--yellow);color:var(--yellow);}
+.header-actions{display:flex;gap:6px;flex-shrink:0;margin-left:8px;}
+.icon-btn{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.6);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{border-color:var(--yellow);color:var(--yellow);}
+
+/* MAIN */
+main{max-width:940px;margin:0 auto;padding:28px 16px calc(80px + var(--sab));}
+.tab-content{display:none;animation:fadeUp .2s ease;}
+.tab-content.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pg-title{font-family:'Lilita One',cursive;font-size:34px;letter-spacing:.3px;line-height:1.1;margin-bottom:3px;}
+.pg-sub{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink3);margin-bottom:24px;}
+
+/* STICKERS */
+.sticker{display:inline-block;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:99px;border:2px solid currentColor;}
+.s-orange{color:var(--orange);background:var(--orange-lt);}
+.s-yellow{color:#8C6800;background:var(--yellow-lt);border-color:var(--yellow);}
+.s-teal{color:var(--teal);background:var(--teal-lt);}
+.s-pink{color:var(--pink);background:var(--pink-lt);}
+.s-green{color:var(--green);background:var(--green-lt);}
+.s-gray{color:var(--ink2);background:var(--bg3);border-color:var(--card-border);}
+.s-red{color:var(--red);background:var(--red-lt);}
+.s-blue{color:var(--blue);background:var(--blue-lt);}
+.s-purple{color:var(--purple);background:var(--purple-lt);}
+
+/* CARD */
+.card{background:var(--card);border:2px solid var(--card-border);border-radius:var(--r);padding:18px 20px;margin-bottom:14px;box-shadow:var(--shadow);transition:box-shadow .15s,background .3s,border-color .3s;}
+.card:hover{box-shadow:var(--shadow-h);}
+
+/* PROGRESS */
+.prog-wrap{height:8px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-top:8px;border:1.5px solid var(--card-border);}
+.prog-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.34,1.56,.64,1);background:linear-gradient(90deg,var(--orange),var(--yellow));}
+.prog-fill.green{background:linear-gradient(90deg,var(--teal),var(--green));}
+
+/* BANNERS */
+.banner{border-radius:var(--r);padding:16px 22px;margin-bottom:22px;display:flex;align-items:center;gap:14px;border:2px solid;box-shadow:4px 4px 0 var(--orange);}
+.banner-dark{background:var(--ink);border-color:var(--ink);}
+.banner-teal{background:var(--teal);border-color:var(--teal);box-shadow:3px 3px 0 #1a7068;}
+.banner-title{font-family:'Lilita One',cursive;font-size:18px;flex-shrink:0;}
+.banner-dark .banner-title{color:var(--yellow);}
+.banner-teal .banner-title{color:#fff;}
+.banner-bar-wrap{flex:1;height:10px;background:rgba(255,255,255,.15);border-radius:99px;overflow:hidden;}
+.banner-bar-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.34,1.56,.64,1);}
+.banner-dark .banner-bar-fill{background:linear-gradient(90deg,var(--orange),var(--yellow));}
+.banner-teal .banner-bar-fill{background:rgba(255,255,255,.6);}
+.banner-num{font-family:'Lilita One',cursive;font-size:24px;flex-shrink:0;min-width:50px;text-align:right;}
+.banner-dark .banner-num{color:var(--yellow);}
+.banner-teal .banner-num{color:var(--yellow);}
+
+/* STATS GRID */
+.stats-grid{display:grid;gap:10px;margin-bottom:22px;}
+.stats-grid-3{grid-template-columns:repeat(3,1fr);}
+.stats-grid-4{grid-template-columns:repeat(4,1fr);}
+.stat-card{background:var(--card);border:2px solid var(--card-border);border-radius:var(--r);padding:12px 14px;text-align:center;box-shadow:var(--shadow);transition:background .3s,border-color .3s;}
+.stat-num{font-family:'Lilita One',cursive;font-size:24px;}
+.stat-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--ink3);text-transform:uppercase;margin-top:2px;}
+
+/* PHASE */
+.phase-hdr{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
+.phase-name{font-family:'Lilita One',cursive;font-size:17px;color:var(--ink);flex:1;min-width:0;}
+.ph-toggle{transition:transform .2s;color:var(--ink3);flex-shrink:0;}
+.ph-toggle.open{transform:rotate(180deg);}
+.phase-body{margin-top:12px;}
+.phase-body.collapsed{display:none;}
+
+/* TASK ROW */
+.task-row{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:8px;margin-bottom:4px;background:var(--bg);border:1.5px solid var(--bg3);transition:border-color .15s,background .15s;}
+.task-row:hover{border-color:var(--card-border);}
+.cb{width:20px;height:20px;border-radius:5px;border:2px solid var(--card-border);background:var(--card);cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.cb.done{background:var(--green);border-color:var(--green);}
+.cb.done::after{content:'✓';color:#fff;font-size:12px;font-weight:700;}
+.task-body{flex:1;min-width:0;}
+.task-nm{font-size:13px;font-weight:700;color:var(--ink);}
+.task-nm.done{text-decoration:line-through;color:var(--ink3);}
+.task-nt{font-size:11px;color:var(--ink3);font-style:italic;margin-top:1px;}
+.sp{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;border:2px solid;cursor:pointer;flex-shrink:0;transition:all .15s;white-space:nowrap;}
+.sp-todo{color:var(--ink2);background:var(--bg3);border-color:var(--card-border);}
+.sp-prog{color:#8C6800;background:var(--yellow-lt);border-color:var(--yellow);}
+.sp-done{color:var(--green);background:var(--green-lt);border-color:var(--green);}
+.del-btn{width:28px;height:28px;border-radius:6px;background:transparent;border:none;cursor:pointer;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;color:var(--ink3);opacity:0;transition:opacity .15s,background .15s;flex-shrink:0;}
+.task-row:hover .del-btn{opacity:1;}
+.del-btn:hover{background:var(--red-lt);color:var(--red);}
+@media(hover:none){.del-btn{opacity:.5;}}
+
+/* PHOTO */
+.photo-section{margin-top:12px;border-top:2px dashed var(--card-border);padding-top:12px;}
+.photo-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+.photo-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.photo-col{flex:1;min-width:140px;}
+.photo-thumb-wrap{position:relative;display:inline-block;}
+.photo-thumb{width:86px;height:68px;border-radius:8px;object-fit:cover;border:2px solid var(--card-border);cursor:pointer;box-shadow:2px 2px 0 var(--card-border);transition:transform .15s,box-shadow .15s;display:block;}
+.photo-thumb:hover{transform:rotate(-2deg) scale(1.07);box-shadow:4px 4px 0 var(--orange);}
+.photo-caption-badge{position:absolute;bottom:4px;left:0;right:0;margin:0 4px;background:rgba(0,0,0,.6);color:#fff;font-family:'Space Mono',monospace;font-size:9px;border-radius:4px;padding:2px 4px;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.photo-add-btn{width:86px;height:68px;border-radius:8px;border:2px dashed var(--card-border);background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:3px;transition:border-color .15s,background .15s;color:var(--ink3);}
+.photo-add-btn:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-lt);}
+.photo-add-btn span{font-size:18px;}
+.photo-add-btn small{font-family:'Space Mono',monospace;font-size:9px;text-transform:uppercase;}
+.ptag{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 6px;border-radius:4px;margin-right:4px;}
+.ptag-b{background:var(--pink-lt);color:var(--pink);}
+.ptag-a{background:var(--teal-lt);color:var(--teal);}
+
+/* LIGHTBOX */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(10,9,8,.93);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+#lightbox.show{display:flex;}
+#lb-img{max-width:90vw;max-height:70vh;border-radius:10px;border:3px solid var(--yellow);}
+#lb-caption-input{font-family:'Space Mono',monospace;font-size:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#fff;padding:6px 12px;border-radius:6px;text-align:center;width:300px;max-width:90vw;outline:none;}
+#lb-caption-input::placeholder{color:rgba(255,255,255,.4);}
+#lb-close{position:absolute;top:18px;right:20px;background:var(--orange);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.lb-actions{display:flex;gap:8px;}
+.lb-btn{background:transparent;border:2px solid rgba(255,255,255,.3);color:rgba(255,255,255,.8);padding:6px 14px;border-radius:8px;font-family:'Space Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;}
+.lb-btn:hover{background:rgba(255,255,255,.1);}
+.lb-btn.del{border-color:#ff6b6b;color:#ff6b6b;}
+.lb-btn.del:hover{background:#ff6b6b;color:#fff;}
+
+/* FORMS */
+.add-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.fi{font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;background:var(--bg);border:2px solid var(--card-border);border-radius:8px;padding:7px 11px;color:var(--ink);outline:none;transition:border-color .15s,background .3s,color .3s;}
+.fi:focus{border-color:var(--orange);}
+.fi::placeholder{color:var(--ink3);font-weight:400;}
+.fi-grow{flex:1;min-width:120px;}
+.btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:7px 14px;border-radius:8px;border:2px solid;cursor:pointer;transition:all .12s;white-space:nowrap;}
+.btn-p{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:2px 2px 0 #b84e12;}
+.btn-p:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 #b84e12;}
+.btn-p:active{transform:translate(1px,1px);box-shadow:none;}
+.btn-g{background:transparent;border-color:var(--card-border);color:var(--ink2);}
+.btn-g:hover{border-color:var(--orange);color:var(--orange);}
+.btn-sm{padding:4px 10px;font-size:11px;}
+.btn-d{background:transparent;border-color:#FECACA;color:var(--red);}
+.btn-d:hover{background:var(--red-lt);}
+.sec-div{display:flex;align-items:center;gap:12px;margin:22px 0 14px;}
+.sec-div-lbl{font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);white-space:nowrap;}
+.sec-div-line{flex:1;border:none;border-top:2px dashed var(--card-border);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.form-full{grid-column:1/-1;}
+.form-field{display:flex;flex-direction:column;gap:4px;}
+.form-label{font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);}
+.empty{text-align:center;padding:36px 20px;color:var(--ink3);font-style:italic;font-size:14px;}
+.empty-big{font-size:32px;margin-bottom:8px;}
+
+/* GEAR */
+.price-input{width:72px;min-width:0;font-family:'Space Mono',monospace;font-size:11px;text-align:right;}
+.cat-total{font-family:'Space Mono',monospace;font-size:11px;color:var(--teal);font-weight:700;text-align:right;margin-top:8px;padding-top:8px;border-top:1.5px dashed var(--card-border);}
+.owned-toggle{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;border:2px solid;cursor:pointer;flex-shrink:0;}
+.own-no{color:var(--ink3);background:var(--bg3);border-color:var(--card-border);}
+.own-yes{color:var(--green);background:var(--green-lt);border-color:var(--green);}
+.price-actual{display:flex;align-items:center;gap:3px;flex-shrink:0;}
+.price-sep{font-family:'Space Mono',monospace;font-size:10px;color:var(--ink3);}
+
+/* JOURNEY */
+.region-north{color:#1D6FA3;background:#E8F4FD;border-color:#7EC8F0;}
+.region-northeast{color:#6B3FA0;background:#F3EEFF;border-color:#C4A0E8;}
+.region-south{color:#2A7D44;background:#E8F5EC;border-color:#7EC8A4;}
+.region-central{color:#C47A1A;background:#FEF3DA;border-color:#F5C26B;}
+.region-other{color:var(--ink2);background:var(--bg3);border-color:var(--card-border);}
+.stop-card{background:var(--card);border:2px solid var(--card-border);border-radius:var(--r);padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);transition:box-shadow .15s,background .3s;}
+.stop-card:hover{box-shadow:var(--shadow-h);}
+.stop-card.sv{border-left:4px solid var(--teal);}
+.stop-top{display:flex;align-items:flex-start;gap:10px;}
+.stop-circle{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Lilita One',cursive;font-size:16px;border:2.5px solid var(--ink);background:var(--yellow-lt);}
+.stop-circle.sv{background:var(--teal);border-color:var(--teal);color:#fff;}
+.stop-info{flex:1;min-width:0;}
+.stop-name{font-family:'Lilita One',cursive;font-size:18px;line-height:1.1;}
+.stop-notes{font-size:13px;color:var(--ink2);white-space:pre-wrap;word-break:break-word;margin-top:4px;}
+.stop-actions{display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;}
+.vbtn{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;padding:4px 10px;border-radius:99px;border:2px solid;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.vbtn-wl{color:var(--ink3);background:var(--bg3);border-color:var(--card-border);}
+.vbtn-wl:hover{color:var(--teal);border-color:var(--teal);background:var(--teal-lt);}
+.vbtn-sv{color:var(--teal);background:var(--teal-lt);border-color:var(--teal);}
+.seb{background:transparent;border:1.5px solid var(--card-border);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;color:var(--ink2);transition:all .15s;font-family:'Nunito',sans-serif;font-weight:700;}
+.seb:hover{border-color:var(--orange);color:var(--orange);}
+.stop-photos{margin-top:10px;padding-top:10px;border-top:2px dashed var(--card-border);}
+.notes-area{font-family:'Nunito',sans-serif;font-size:13px;background:var(--bg);border:2px solid var(--orange);border-radius:8px;padding:7px 10px;color:var(--ink);resize:vertical;min-height:60px;width:100%;outline:none;font-weight:600;}
+.add-stop-wrap{background:var(--yellow-lt);border:2px dashed var(--yellow);border-radius:var(--r);padding:18px;margin-top:4px;}
+
+/* JOURNEY PROGRESS */
+.journey-progress-wrap{margin-bottom:6px;}
+.journey-progress-label{font-family:'Space Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);margin-bottom:4px;}
+.confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9990;}
+.confetti-piece{position:absolute;width:8px;height:8px;border-radius:2px;animation:confettiFall 2.5s ease-out forwards;}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+
+/* ══ TIMELINE TAB ══ */
+.timeline-wrap{position:relative;padding-left:28px;}
+.timeline-line{position:absolute;left:10px;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--orange),var(--yellow),var(--teal));border-radius:99px;opacity:.4;}
+.tl-entry{position:relative;margin-bottom:28px;animation:fadeUp .3s ease;}
+.tl-dot{position:absolute;left:-23px;top:16px;width:16px;height:16px;border-radius:50%;border:3px solid var(--orange);background:var(--card);transition:background .2s;}
+.tl-dot.has-photo{background:var(--orange);}
+.tl-dot.manual{border-color:var(--yellow);background:var(--yellow);}
+.tl-dot.phase-auto{border-color:var(--teal);}
+.tl-dot.phase-auto.has-photo{background:var(--teal);}
+.tl-card{background:var(--card);border:2px solid var(--card-border);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow);transition:box-shadow .15s,background .3s;}
+.tl-card:hover{box-shadow:var(--shadow-h);}
+.tl-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.tl-date{font-family:'Space Mono',monospace;font-size:11px;color:var(--orange);font-weight:700;}
+.tl-phase-tag{font-family:'Space Mono',monospace;font-size:10px;padding:2px 8px;border-radius:99px;border:1.5px solid var(--teal);color:var(--teal);background:var(--teal-lt);}
+.tl-manual-tag{font-family:'Space Mono',monospace;font-size:10px;padding:2px 8px;border-radius:99px;border:1.5px solid var(--yellow);color:#8C6800;background:var(--yellow-lt);}
+.tl-title{font-family:'Lilita One',cursive;font-size:17px;margin-bottom:4px;}
+.tl-note{font-size:13px;color:var(--ink2);white-space:pre-wrap;word-break:break-word;}
+.tl-photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.tl-thumb{width:100px;height:80px;border-radius:8px;object-fit:cover;border:2px solid var(--card-border);cursor:pointer;transition:transform .15s,box-shadow .15s;}
+.tl-thumb:hover{transform:rotate(-1.5deg) scale(1.05);box-shadow:3px 3px 0 var(--orange);}
+.tl-add-photo{width:100px;height:80px;border-radius:8px;border:2px dashed var(--card-border);background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:3px;color:var(--ink3);transition:all .15s;font-family:'Space Mono',monospace;font-size:9px;text-transform:uppercase;}
+.tl-add-photo:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-lt);}
+.tl-add-photo span{font-size:18px;}
+.tl-empty-state{text-align:center;padding:48px 20px;}
+.tl-van-emoji{font-size:56px;display:block;margin-bottom:12px;animation:vanBounce 2s infinite;}
+@keyframes vanBounce{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-8px) rotate(2deg);}}
+.add-tl-form{background:var(--orange-lt);border:2px dashed var(--orange);border-radius:var(--r);padding:18px;margin-top:4px;}
+.tl-legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;font-family:'Space Mono',monospace;font-size:10px;color:var(--ink3);}
+.tl-legend-item{display:flex;align-items:center;gap:6px;}
+.tl-legend-dot{width:12px;height:12px;border-radius:50%;border:2px solid;}
+
+/* EXPORT/IMPORT MODAL */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:8000;align-items:center;justify-content:center;}
+#modal-overlay.show{display:flex;}
+.modal{background:var(--card);border:2px solid var(--card-border);border-radius:var(--r);padding:24px;width:360px;max-width:92vw;box-shadow:6px 6px 0 var(--orange);}
+.modal-title{font-family:'Lilita One',cursive;font-size:20px;margin-bottom:16px;color:var(--ink);}
+.modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.modal-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink3);}
+
+/* TOAST */
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--yellow);padding:9px 18px;border-radius:99px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;pointer-events:none;transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:9998;white-space:nowrap;border:2px solid var(--yellow);}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  header{padding:0 10px;padding-top:var(--sat);gap:6px;}
+  .logo{font-size:15px;}
+  nav button{font-size:9px;padding:5px 8px;letter-spacing:.03em;}
+  .icon-btn{width:30px;height:30px;font-size:13px;}
+  main{padding:16px 10px calc(70px + var(--sab));}
+  .pg-title{font-size:24px;}
+  .pg-sub{font-size:10px;margin-bottom:16px;}
+  .stats-grid-4{grid-template-columns:repeat(2,1fr);}
+  .stats-grid-3{grid-template-columns:repeat(3,1fr);}
+  .form-grid{grid-template-columns:1fr;}
+  .form-full{grid-column:1;}
+  .task-row{flex-wrap:wrap;gap:6px;}
+  .task-body{min-width:calc(100% - 60px);}
+  .price-actual{flex-wrap:wrap;}
+  .price-input{width:60px;}
+  .banner{flex-wrap:wrap;gap:8px;padding:12px 14px;}
+  .banner-bar-wrap{min-width:100%;}
+  .stop-actions{flex-wrap:wrap;gap:4px;max-width:100%;}
+  .stop-top{flex-wrap:wrap;}
+  .stop-circle{width:32px;height:32px;font-size:14px;}
+  .stop-info{min-width:0;flex:1;}
+  .stop-actions{width:100%;margin-top:8px;padding-top:8px;border-top:1px dashed var(--card-border);}
+  .photo-thumb,.photo-add-btn{width:76px;height:62px;}
+  .tl-thumb,.tl-add-photo{width:84px;height:68px;}
+  .timeline-wrap{padding-left:22px;}
+  .tl-dot{left:-18px;width:14px;height:14px;}
+  .timeline-line{left:8px;}
+  .banner-title{font-size:15px;}
+  .card{padding:14px 14px;}
+  .stop-card{padding:12px 14px;}
+}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--card-border);border-radius:99px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🚐 Vanagon</div>
+  <nav>
+    <button class="active" onclick="switchTab('reno')">🔧 Reno</button>
+    <button onclick="switchTab('gear')">🎒 Gear</button>
+    <button onclick="switchTab('journey')">🗺️ Journey</button>
+    <button onclick="switchTab('timeline')">📸 Timeline</button>
+  </nav>
+  <div class="header-actions">
+    <button class="icon-btn" onclick="toggleDark()" id="dark-btn" title="Toggle dark mode">🌙</button>
+    <button class="icon-btn" onclick="openModal()" title="Export / Import">💾</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══════ RENOVATION ═══════ -->
+<div class="tab-content active" id="tab-reno">
+  <div class="pg-title">Van Renovation 🔧</div>
+  <div class="pg-sub">Phases → tasks → before &amp; after photos</div>
+  <div class="banner banner-dark">
+    <div class="banner-title">Overall</div>
+    <div style="flex:1">
+      <div class="banner-bar-wrap"><div class="banner-bar-fill" id="overall-fill" style="width:0%"></div></div>
+    </div>
+    <div class="banner-num" id="overall-pct">0%</div>
+  </div>
+  <div id="phases-list"></div>
+  <div class="sec-div"><div class="sec-div-line"></div><div class="sec-div-lbl">+ new phase</div><div class="sec-div-line"></div></div>
+  <div class="add-row">
+    <input class="fi fi-grow" id="new-phase-input" placeholder="Phase name (e.g. Electrical wiring)" />
+    <button class="btn btn-p" onclick="addPhase()">Add phase</button>
+  </div>
+</div>
+
+<!-- ═══════ GEAR ═══════ -->
+<div class="tab-content" id="tab-gear">
+  <div class="pg-title">Gear List 🎒</div>
+  <div class="pg-sub">Track what you need, own, estimated &amp; actual prices</div>
+  <div class="banner banner-teal">
+    <div class="banner-title">💰 Total to buy</div>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);margin-bottom:3px;">
+        <span>Estimated</span><span>Actual paid</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:baseline">
+        <span style="font-family:'Lilita One',cursive;font-size:20px;color:#fff" id="gear-est">฿0</span>
+        <span style="font-family:'Space Mono',monospace;font-size:12px;color:rgba(255,255,255,.5)">est /</span>
+        <span style="font-family:'Lilita One',cursive;font-size:20px;color:var(--yellow)" id="gear-actual">฿0</span>
+        <span style="font-family:'Space Mono',monospace;font-size:12px;color:rgba(255,255,255,.5)">paid</span>
+      </div>
+    </div>
+  </div>
+  <div class="stats-grid stats-grid-4" id="gear-stats"></div>
+  <div id="gear-list"></div>
+  <div class="sec-div"><div class="sec-div-line"></div><div class="sec-div-lbl">+ add item</div><div class="sec-div-line"></div></div>
+  <div class="card">
+    <div class="form-grid">
+      <div class="form-field"><div class="form-label">Item name</div><input class="fi" id="ng-name" placeholder="e.g. Camp chair" /></div>
+      <div class="form-field"><div class="form-label">Category</div><select class="fi" id="ng-cat"></select></div>
+      <div class="form-field"><div class="form-label">Note (optional)</div><input class="fi" id="ng-note" placeholder="e.g. Folds flat" /></div>
+      <div class="form-field"><div class="form-label">Est. price (฿)</div><input class="fi" id="ng-price" type="number" placeholder="0" min="0" /></div>
+      <div class="form-field"><div class="form-label">Priority</div><select class="fi" id="ng-priority"><option value="must">Must-have</option><option value="nice">Nice-to-have</option></select></div>
+      <div class="form-field"><div class="form-label">Already owned?</div><select class="fi" id="ng-owned"><option value="0">No — need to buy</option><option value="1">Yes — already have it</option></select></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-p" onclick="addGearItem()">+ Add item</button>
+      <button class="btn btn-g btn-sm" onclick="addGearCat()">+ New category</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ JOURNEY ═══════ -->
+<div class="tab-content" id="tab-journey">
+  <div class="pg-title">Journey Log 🗺️</div>
+  <div class="pg-sub">Wishlist + places visited — tap to mark visited, add photos</div>
+  <div class="banner banner-teal" id="journey-banner">
+    <div class="banner-title">🗺️ Places</div>
+    <div style="flex:1">
+      <div class="journey-progress-label" id="journey-prog-label">0 of 0 visited</div>
+      <div class="banner-bar-wrap"><div class="banner-bar-fill" id="journey-prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="banner-num" id="journey-pct">0%</div>
+  </div>
+  <div class="stats-grid stats-grid-3" id="journey-stats"></div>
+  <div id="stops-list"></div>
+  <div class="sec-div"><div class="sec-div-line"></div><div class="sec-div-lbl">+ add a place</div><div class="sec-div-line"></div></div>
+  <div class="add-stop-wrap">
+    <div class="form-grid">
+      <div class="form-field"><div class="form-label">Place name</div><input class="fi" id="ns-name" placeholder="e.g. Pai" /></div>
+      <div class="form-field"><div class="form-label">Region</div>
+        <select class="fi" id="ns-region">
+          <option value="North">North</option>
+          <option value="Northeast">Northeast (Isaan)</option>
+          <option value="South">South</option>
+          <option value="Central">Central</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-full form-field"><div class="form-label">Notes / dreams</div><textarea class="fi" id="ns-notes" rows="2" placeholder="What to do, where to park, TikTok ideas, coffee spots..."></textarea></div>
+      <div class="form-field"><div class="form-label">Status</div><select class="fi" id="ns-status"><option value="wishlist">Wishlist 🌟</option><option value="visited">Already visited ✅</option></select></div>
+    </div>
+    <button class="btn btn-p" onclick="addStop()">+ Add place</button>
+  </div>
+</div>
+
+<!-- ═══════ TIMELINE ═══════ -->
+<div class="tab-content" id="tab-timeline">
+  <div class="pg-title">Renovation Timeline 📸</div>
+  <div class="pg-sub">The story of the van — auto-pulled from phases + your own milestone moments</div>
+  <div class="tl-legend">
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:var(--teal);border-color:var(--teal)"></div><span>From renovation phases</span></div>
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:var(--yellow);border-color:var(--yellow)"></div><span>Your own milestone</span></div>
+  </div>
+  <div class="timeline-wrap">
+    <div class="timeline-line"></div>
+    <div id="timeline-entries"></div>
+  </div>
+  <div class="sec-div"><div class="sec-div-line"></div><div class="sec-div-lbl">+ add milestone</div><div class="sec-div-line"></div></div>
+  <div class="add-tl-form">
+    <div class="form-grid">
+      <div class="form-field"><div class="form-label">Title</div><input class="fi" id="tl-title" placeholder="e.g. Van officially named! 🎉" /></div>
+      <div class="form-field"><div class="form-label">Date</div><input class="fi" type="date" id="tl-date" /></div>
+      <div class="form-full form-field"><div class="form-label">Note</div><textarea class="fi" id="tl-note" rows="2" placeholder="What happened, how you felt, what's next..."></textarea></div>
+    </div>
+    <button class="btn btn-p" onclick="addMilestone()">+ Add milestone</button>
+  </div>
+</div>
+
+</main>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button id="lb-close" onclick="closeLightbox()">✕</button>
+  <img id="lb-img" src="" alt="" />
+  <input id="lb-caption-input" placeholder="Add a caption..." />
+  <div class="lb-actions">
+    <button class="lb-btn" onclick="saveLbCaption()">Save caption</button>
+    <button class="lb-btn del" onclick="deleteLbPhoto()">Remove photo</button>
+  </div>
+</div>
+
+<!-- EXPORT/IMPORT MODAL -->
+<div id="modal-overlay">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">💾 Export / Import</div>
+    <p style="font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:12px">Export saves all your data as a JSON file. Import loads data back — this will overwrite your current data.</p>
+    <div class="modal-actions">
+      <button class="btn btn-p" onclick="exportData()">⬇ Export JSON</button>
+      <button class="btn btn-g" onclick="document.getElementById('import-file').click()">⬆ Import JSON</button>
+    </div>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)" />
+  </div>
+</div>
+
+<!-- CONFETTI -->
+<canvas class="confetti" id="confetti-canvas"></canvas>
+
+<div id="toast"></div>
+
+<script>
+// ── STORAGE ──────────────────────────────────────────────────────
+const S={
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}},
+  set(k,v){localStorage.setItem(k,JSON.stringify(v));}
+};
+function uid(){return Math.random().toString(36).slice(2,9);}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmt(n){return'฿'+(Math.round(n||0)).toLocaleString();}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300);}
+function today(){return new Date().toISOString().slice(0,10);}
+function fmtDate(d){if(!d)return'';try{const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}catch{return d;}}
+
+// ── DARK MODE ─────────────────────────────────────────────────────
+let darkMode=S.get('vp_dark',false);
+function applyDark(){document.body.toggleAttribute('data-dark',darkMode);document.getElementById('dark-btn').textContent=darkMode?'☀️':'🌙';}
+function toggleDark(){darkMode=!darkMode;S.set('vp_dark',darkMode);applyDark();}
+applyDark();
+
+// ── STATE ────────────────────────────────────────────────────────
+let phases=S.get('vp4_phases',[
+  {id:uid(),name:'Bodywork & paint',open:true,photos:[],tasks:[
+    {id:uid(),name:'Colour repair — driver side panel',note:'Rust treatment first',status:'inprogress'},
+    {id:uid(),name:'Colour repair — rear bumper',note:'',status:'todo'},
+    {id:uid(),name:'Surface prep & primer',note:'',status:'todo'},
+    {id:uid(),name:'Full respray decision',note:'Partial or full repaint?',status:'todo'},
+  ]},
+  {id:uid(),name:'Interior build',open:true,photos:[],tasks:[
+    {id:uid(),name:'Rock & Roll bed frame',note:'Custom build in progress',status:'inprogress'},
+    {id:uid(),name:'Bed upholstery',note:'',status:'todo'},
+    {id:uid(),name:'Flooring',note:'Vinyl plank or marine carpet',status:'todo'},
+    {id:uid(),name:'Storage cabinets',note:'',status:'todo'},
+    {id:uid(),name:'Wall cladding & insulation',note:'',status:'todo'},
+  ]},
+  {id:uid(),name:'Electrical & power',open:false,photos:[],tasks:[
+    {id:uid(),name:'Secondary 12V battery',note:'',status:'todo'},
+    {id:uid(),name:'USB charging points',note:'',status:'todo'},
+    {id:uid(),name:'LED interior lighting',note:'',status:'todo'},
+    {id:uid(),name:'Solar panel roof mount',note:'',status:'todo'},
+  ]},
+  {id:uid(),name:'Mechanical',open:false,photos:[],tasks:[
+    {id:uid(),name:'Full engine service',note:'Oil, plugs, air filter, belts',status:'todo'},
+    {id:uid(),name:'Coolant system check',note:'Wasserboxer — critical!',status:'todo'},
+    {id:uid(),name:'Brake inspection',note:'',status:'todo'},
+    {id:uid(),name:'Tyre check / replace',note:'',status:'todo'},
+  ]},
+]);
+
+let gearCats=S.get('vp4_gearCats',['Sleeping & comfort','Kitchen & cooking','Coffee kit','Power & lighting','Outdoor living','Van essentials']);
+let gear=S.get('vp4_gear',[
+  {id:uid(),cat:'Sleeping & comfort',name:'Cotton sheet set',note:'Lightweight',priority:'must',owned:false,packed:false,price:350,actual:0},
+  {id:uid(),cat:'Sleeping & comfort',name:'Sleeping bag liner',note:'Highlands nights ~15°C',priority:'must',owned:false,packed:false,price:490,actual:0},
+  {id:uid(),cat:'Sleeping & comfort',name:'Compressible pillow x2',note:'',priority:'must',owned:false,packed:false,price:380,actual:0},
+  {id:uid(),cat:'Sleeping & comfort',name:'Blackout window covers',note:'Magnetic or suction-cup',priority:'must',owned:false,packed:false,price:450,actual:0},
+  {id:uid(),cat:'Sleeping & comfort',name:'USB fan (12V)',note:'Essential for still lowland nights',priority:'must',owned:false,packed:false,price:590,actual:0},
+  {id:uid(),cat:'Sleeping & comfort',name:'Mosquito net',note:'',priority:'nice',owned:false,packed:false,price:250,actual:0},
+  {id:uid(),cat:'Kitchen & cooking',name:'Single burner butane stove',note:'Gas at every 7-Eleven',priority:'must',owned:false,packed:false,price:490,actual:0},
+  {id:uid(),cat:'Kitchen & cooking',name:'Cookpot + lid (1.5L)',note:'Titanium saves weight',priority:'must',owned:false,packed:false,price:680,actual:0},
+  {id:uid(),cat:'Kitchen & cooking',name:'Foldable pan 20cm',note:'',priority:'must',owned:false,packed:false,price:390,actual:0},
+  {id:uid(),cat:'Kitchen & cooking',name:'Spork set x2',note:'',priority:'must',owned:false,packed:false,price:120,actual:0},
+  {id:uid(),cat:'Kitchen & cooking',name:'Flexible cutting board',note:'',priority:'must',owned:false,packed:false,price:90,actual:0},
+  {id:uid(),cat:'Kitchen & cooking',name:'Collapsible water container 10L',note:'',priority:'must',owned:false,packed:false,price:280,actual:0},
+  {id:uid(),cat:'Coffee kit',name:'Flair Pro 3',note:'',priority:'must',owned:true,packed:false,price:0,actual:0},
+  {id:uid(),cat:'Coffee kit',name:'EZpresso',note:'Backup / light days',priority:'must',owned:true,packed:false,price:0,actual:0},
+  {id:uid(),cat:'Coffee kit',name:'Hand grinder (Timemore C3)',note:'No power needed',priority:'must',owned:false,packed:false,price:2490,actual:0},
+  {id:uid(),cat:'Coffee kit',name:'Stovetop gooseneck kettle',note:'Gas-compatible',priority:'must',owned:false,packed:false,price:890,actual:0},
+  {id:uid(),cat:'Coffee kit',name:'Pocket digital scale',note:'0.1g resolution',priority:'must',owned:false,packed:false,price:350,actual:0},
+  {id:uid(),cat:'Coffee kit',name:'Airtight bean tin',note:'250–500g',priority:'must',owned:false,packed:false,price:190,actual:0},
+  {id:uid(),cat:'Power & lighting',name:'Portable power station 300Wh',note:'e.g. Jackery 300',priority:'must',owned:false,packed:false,price:8900,actual:0},
+  {id:uid(),cat:'Power & lighting',name:'USB multi-port car charger',note:'',priority:'must',owned:false,packed:false,price:290,actual:0},
+  {id:uid(),cat:'Power & lighting',name:'LED string lights USB',note:'Van interior vibes',priority:'must',owned:false,packed:false,price:180,actual:0},
+  {id:uid(),cat:'Power & lighting',name:'Headlamp x2',note:'',priority:'must',owned:false,packed:false,price:490,actual:0},
+  {id:uid(),cat:'Power & lighting',name:'Solar panel 60–100W',note:'Roof mount',priority:'nice',owned:false,packed:false,price:3200,actual:0},
+  {id:uid(),cat:'Outdoor living',name:'Camp chairs x2',note:'Foldable lightweight',priority:'must',owned:false,packed:false,price:990,actual:0},
+  {id:uid(),cat:'Outdoor living',name:'Small folding table',note:'Coffee prep station outside',priority:'must',owned:false,packed:false,price:690,actual:0},
+  {id:uid(),cat:'Outdoor living',name:'Tarp / rain canopy 3×3m',note:'Thai rain is INSTANT',priority:'must',owned:false,packed:false,price:590,actual:0},
+  {id:uid(),cat:'Outdoor living',name:'Paracord 20m',note:'Tarp rigging + clothesline',priority:'must',owned:false,packed:false,price:120,actual:0},
+  {id:uid(),cat:'Van essentials',name:'T3 basic tool kit',note:'Plugs, fuses, zip ties, belts',priority:'must',owned:false,packed:false,price:890,actual:0},
+  {id:uid(),cat:'Van essentials',name:'Compact jump starter',note:'Vintage van — be prepared!',priority:'must',owned:false,packed:false,price:1290,actual:0},
+  {id:uid(),cat:'Van essentials',name:'Tyre repair kit + 12V pump',note:'',priority:'must',owned:false,packed:false,price:590,actual:0},
+  {id:uid(),cat:'Van essentials',name:'First aid kit',note:'',priority:'must',owned:false,packed:false,price:350,actual:0},
+  {id:uid(),cat:'Van essentials',name:'DEET insect repellent',note:'Forest / water areas',priority:'must',owned:false,packed:false,price:120,actual:0},
+  {id:uid(),cat:'Van essentials',name:'Sunscreen SPF50+ x2',note:'',priority:'must',owned:false,packed:false,price:180,actual:0},
+  {id:uid(),cat:'Van essentials',name:'Wet wipes bulk',note:'Outdoor shower substitute',priority:'must',owned:false,packed:false,price:150,actual:0},
+]);
+
+let stops=S.get('vp4_stops',[
+  {id:uid(),name:'Pai',region:'North',notes:'762 bends — allow extra T3 time!\nWarm springs nearby. Bamboo bridge. TikTok sunsets.',status:'wishlist',photos:[]},
+  {id:uid(),name:'Mae Hong Son',region:'North',notes:'Remote and magical. Morning mist over the lake. Kew Kan Pae viewpoint.',status:'wishlist',photos:[]},
+  {id:uid(),name:'Chiang Rai',region:'North',notes:'White Temple + Blue Temple. Hill tribe coffee farms — perfect for a coffee TikTok.',status:'wishlist',photos:[]},
+]);
+
+let milestones=S.get('vp4_milestones',[
+  {id:uid(),title:'Project kickoff! 🚐',date:'2025-01-15',note:'Officially decided to make the Vanagon dream happen. The journey begins.',photos:[],type:'manual'},
+]);
+
+// ── TAB SWITCH ────────────────────────────────────────────────────
+function switchTab(name){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  const idx=['reno','gear','journey','timeline'].indexOf(name);
+  document.querySelectorAll('nav button')[idx].classList.add('active');
+  if(name==='timeline')renderTimeline();
+}
+
+// ════════ RENOVATION ══════════════════════════════════════════════
+function savePhases(){S.set('vp4_phases',phases);}
+function renderPhases(){
+  const c=document.getElementById('phases-list');c.innerHTML='';
+  let total=0,done=0;
+  phases.forEach(p=>{total+=p.tasks.length;done+=p.tasks.filter(t=>t.status==='done').length;});
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('overall-fill').style.width=pct+'%';
+  document.getElementById('overall-pct').textContent=pct+'%';
+  if(!phases.length){c.innerHTML='<div class="empty"><div class="empty-big">🔧</div>No phases yet!</div>';return;}
+  phases.forEach(ph=>{
+    const pd=ph.tasks.filter(t=>t.status==='done').length,pt=ph.tasks.length;
+    const ppct=pt?Math.round(pd/pt*100):0;
+    const div=document.createElement('div');div.className='card';
+    div.innerHTML=`
+      <div class="phase-hdr" onclick="togglePhase('${ph.id}')">
+        <div class="phase-name">${esc(ph.name)}</div>
+        <span class="sticker s-gray" style="font-size:10px">${pd}/${pt}</span>
+        <div class="prog-wrap" style="width:60px;margin:0"><div class="prog-fill" style="width:${ppct}%"></div></div>
+        <svg class="ph-toggle ${ph.open?'open':''}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        <button class="btn btn-d btn-sm" onclick="event.stopPropagation();delPhase('${ph.id}')">Remove</button>
+      </div>
+      <div class="phase-body ${ph.open?'':'collapsed'}" id="pbody-${ph.id}">
+        <div id="ptasks-${ph.id}" style="margin-top:10px"></div>
+        <div class="add-row" style="margin-top:8px">
+          <input class="fi fi-grow" id="nt-${ph.id}" placeholder="New task name" />
+          <input class="fi" style="width:140px" id="nn-${ph.id}" placeholder="Note (optional)" />
+          <button class="btn btn-g btn-sm" onclick="addTask('${ph.id}')">+ Add</button>
+        </div>
+        <div class="photo-section">
+          <div style="display:flex;gap:16px;flex-wrap:wrap">
+            <div class="photo-col"><div class="photo-label"><span class="ptag ptag-b">Before</span> photos</div><div class="photo-grid" id="pb-${ph.id}"></div></div>
+            <div class="photo-col"><div class="photo-label"><span class="ptag ptag-a">After</span> photos</div><div class="photo-grid" id="pa-${ph.id}"></div></div>
+          </div>
+        </div>
+      </div>`;
+    c.appendChild(div);
+    // tasks
+    const tc=document.getElementById('ptasks-'+ph.id);
+    if(!ph.tasks.length){tc.innerHTML='<div style="color:var(--ink3);font-size:12px;font-style:italic;padding:4px 0">No tasks yet</div>';}
+    ph.tasks.forEach(task=>{
+      const sM={todo:['sp-todo','To do'],inprogress:['sp-prog','In progress'],done:['sp-done','Done']};
+      const row=document.createElement('div');row.className='task-row';
+      row.innerHTML=`<div class="cb ${task.status==='done'?'done':''}" onclick="toggleTaskDone('${ph.id}','${task.id}')"></div>
+        <div class="task-body"><div class="task-nm ${task.status==='done'?'done':''}">${esc(task.name)}</div>${task.note?`<div class="task-nt">${esc(task.note)}</div>`:''}</div>
+        <span class="sp ${sM[task.status][0]}" onclick="cycleStatus('${ph.id}','${task.id}')">${sM[task.status][1]}</span>
+        <button class="del-btn" onclick="delTask('${ph.id}','${task.id}')">×</button>`;
+      tc.appendChild(row);
+    });
+    // photos
+    ['before','after'].forEach(tag=>{
+      const pg=document.getElementById((tag==='before'?'pb-':'pa-')+ph.id);
+      (ph.photos||[]).filter(p=>p.tag===tag).forEach(photo=>{
+        const wrap=document.createElement('div');wrap.className='photo-thumb-wrap';
+        const img=document.createElement('img');img.className='photo-thumb';img.src=photo.data;img.alt=tag;
+        img.onclick=()=>openLightbox(photo,'phase',ph.id);
+        wrap.appendChild(img);
+        if(photo.caption){const cap=document.createElement('div');cap.className='photo-caption-badge';cap.textContent=photo.caption;wrap.appendChild(cap);}
+        pg.appendChild(wrap);
+      });
+      const ab=document.createElement('div');ab.className='photo-add-btn';
+      ab.innerHTML=`<span>📷</span><small>${tag}</small>`;
+      ab.onclick=()=>pickPhoto(ph.id,tag,'phase');pg.appendChild(ab);
+    });
+  });
+}
+function togglePhase(id){const p=phases.find(x=>x.id===id);if(p){p.open=!p.open;savePhases();renderPhases();}}
+function cycleStatus(pid,tid){const p=phases.find(x=>x.id===pid),t=p?.tasks.find(x=>x.id===tid);if(!t)return;t.status={todo:'inprogress',inprogress:'done',done:'todo'}[t.status];savePhases();renderPhases();toast('Status updated ✓');}
+function toggleTaskDone(pid,tid){const p=phases.find(x=>x.id===pid),t=p?.tasks.find(x=>x.id===tid);if(!t)return;t.status=t.status==='done'?'todo':'done';savePhases();renderPhases();}
+function addTask(pid){const n=document.getElementById('nt-'+pid).value.trim();if(!n)return;const note=document.getElementById('nn-'+pid).value.trim();phases.find(x=>x.id===pid).tasks.push({id:uid(),name:n,note,status:'todo'});savePhases();renderPhases();toast('Task added 🔧');}
+function delTask(pid,tid){const p=phases.find(x=>x.id===pid);if(!p)return;p.tasks=p.tasks.filter(t=>t.id!==tid);savePhases();renderPhases();toast('Removed');}
+function addPhase(){const inp=document.getElementById('new-phase-input');const n=inp.value.trim();if(!n)return;phases.push({id:uid(),name:n,open:true,tasks:[],photos:[]});inp.value='';savePhases();renderPhases();toast('Phase added 🎉');}
+function delPhase(id){if(!confirm('Delete this phase and everything in it?'))return;phases=phases.filter(p=>p.id!==id);savePhases();renderPhases();toast('Phase removed');}
+
+// ════════ PHOTOS (shared) ══════════════════════════════════════════
+let _lb={photo:null,ctx:null,id:null};
+
+// Compress image to max 1200px wide, quality 0.82 — critical for localStorage on mobile
+function compressImage(file, cb){
+  const img=new Image();
+  const url=URL.createObjectURL(file);
+  img.onload=()=>{
+    URL.revokeObjectURL(url);
+    const MAX=1200;
+    let w=img.width,h=img.height;
+    if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+    const canvas=document.createElement('canvas');
+    canvas.width=w;canvas.height=h;
+    canvas.getContext('2d').drawImage(img,0,0,w,h);
+    cb(canvas.toDataURL('image/jpeg',0.82));
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);cb(null);};
+  img.src=url;
+}
+
+function pickPhoto(ctxId,tag,type){
+  const inp=document.createElement('input');
+  inp.type='file';
+  // iOS: show Photos + Camera sheet; no capture attr = user chooses
+  inp.accept='image/*';
+  inp.setAttribute('accept','image/*');
+  // append to body briefly — required on some iOS PWA builds
+  inp.style.cssText='position:fixed;top:-9999px;opacity:0;';
+  document.body.appendChild(inp);
+  inp.onchange=e=>{
+    document.body.removeChild(inp);
+    const file=e.target.files[0];if(!file)return;
+    toast('Processing photo… 📸');
+    compressImage(file, data=>{
+      if(!data){toast('Could not load image 😅');return;}
+      if(type==='phase'){const p=phases.find(x=>x.id===ctxId);if(!p.photos)p.photos=[];p.photos.push({id:uid(),tag,data,caption:'',name:file.name,date:today()});savePhases();renderPhases();}
+      else if(type==='stop'){const s=stops.find(x=>x.id===ctxId);if(!s.photos)s.photos=[];s.photos.push({id:uid(),data,caption:'',name:file.name});saveStops();renderStops();}
+      else if(type==='milestone'){const m=milestones.find(x=>x.id===ctxId);if(!m.photos)m.photos=[];m.photos.push({id:uid(),data,caption:'',name:file.name});saveMilestones();renderTimeline();}
+      toast('Photo added 📸');
+    });
+  };
+  inp.click();
+}
+function openLightbox(photo,type,ctxId){
+  _lb={photo,ctx:type,id:ctxId};
+  document.getElementById('lb-img').src=photo.data;
+  document.getElementById('lb-caption-input').value=photo.caption||'';
+  document.getElementById('lightbox').classList.add('show');
+}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('show');_lb={photo:null,ctx:null,id:null};}
+document.getElementById('lb-close').onclick=closeLightbox;
+document.getElementById('lightbox').onclick=function(e){if(e.target===this)closeLightbox();};
+function saveLbCaption(){
+  if(!_lb.photo)return;
+  const cap=document.getElementById('lb-caption-input').value.trim();
+  _lb.photo.caption=cap;
+  if(_lb.ctx==='phase'){savePhases();renderPhases();}
+  else if(_lb.ctx==='stop'){saveStops();renderStops();}
+  else if(_lb.ctx==='milestone'){saveMilestones();renderTimeline();}
+  closeLightbox();toast('Caption saved ✓');
+}
+function deleteLbPhoto(){
+  if(!_lb.photo||!_lb.id)return;
+  if(_lb.ctx==='phase'){const p=phases.find(x=>x.id===_lb.id);if(p){p.photos=p.photos.filter(x=>x.id!==_lb.photo.id);savePhases();renderPhases();}}
+  else if(_lb.ctx==='stop'){const s=stops.find(x=>x.id===_lb.id);if(s){s.photos=s.photos.filter(x=>x.id!==_lb.photo.id);saveStops();renderStops();}}
+  else if(_lb.ctx==='milestone'){const m=milestones.find(x=>x.id===_lb.id);if(m){m.photos=m.photos.filter(x=>x.id!==_lb.photo.id);saveMilestones();renderTimeline();}}
+  closeLightbox();toast('Photo removed');
+}
+
+// ════════ GEAR ════════════════════════════════════════════════════
+function saveGear(){S.set('vp4_gear',gear);S.set('vp4_gearCats',gearCats);}
+function populateCatSel(){const sel=document.getElementById('ng-cat');if(!sel)return;sel.innerHTML=gearCats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');}
+function renderGear(){
+  populateCatSel();
+  const notOwned=gear.filter(g=>!g.owned);
+  const estTotal=notOwned.reduce((s,g)=>s+(g.price||0),0);
+  const actTotal=notOwned.reduce((s,g)=>s+(g.actual||0),0);
+  const total=gear.length,owned=gear.filter(g=>g.owned).length,packed=gear.filter(g=>g.packed).length;
+  document.getElementById('gear-est').textContent=fmt(estTotal);
+  document.getElementById('gear-actual').textContent=fmt(actTotal);
+  document.getElementById('gear-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-num" style="color:var(--orange)">${total}</div><div class="stat-label">Total</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--green)">${owned}</div><div class="stat-label">Owned</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--teal)">${packed}</div><div class="stat-label">Packed</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--pink)">${total-owned}</div><div class="stat-label">To buy</div></div>`;
+  const c=document.getElementById('gear-list');c.innerHTML='';
+  gearCats.forEach(cat=>{
+    const items=gear.filter(g=>g.cat===cat);if(!items.length)return;
+    const notOwnedItems=items.filter(g=>!g.owned);
+    const catEst=notOwnedItems.reduce((s,g)=>s+(g.price||0),0);
+    const catAct=notOwnedItems.reduce((s,g)=>s+(g.actual||0),0);
+    const cid='gc_'+cat.replace(/\W/g,'_');
+    const sec=document.createElement('div');sec.className='card';
+    sec.innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span class="sticker s-orange">${esc(cat)}</span><span style="font-size:12px;color:var(--ink3)">${items.length}</span><button class="btn btn-d btn-sm" style="margin-left:auto" onclick="delGearCat('${esc(cat)}')">Remove</button></div><div id="${cid}"></div><div class="cat-total">Est: ${fmt(catEst)} · Paid: ${fmt(catAct)}</div>`;
+    c.appendChild(sec);
+    const cc=document.getElementById(cid);
+    items.forEach(item=>{
+      const row=document.createElement('div');row.className='task-row';
+      row.innerHTML=`<div class="cb ${item.packed?'done':''}" onclick="togglePacked('${item.id}')"></div>
+        <div class="task-body"><div class="task-nm ${item.packed?'done':''}">${esc(item.name)}</div>${item.note?`<div class="task-nt">${esc(item.note)}</div>`:''}</div>
+        <span class="owned-toggle ${item.owned?'own-yes':'own-no'}" onclick="toggleOwned('${item.id}')">${item.owned?'owned':'need'}</span>
+        <span class="sticker ${item.priority==='must'?'s-pink':'s-gray'}" style="font-size:9px">${item.priority}</span>
+        ${!item.owned?`<div class="price-actual">
+          <input class="fi price-input" type="number" min="0" value="${item.price||0}" placeholder="Est" onchange="updatePrice('${item.id}','est',this.value)" title="Estimated price" />
+          <span class="price-sep">/</span>
+          <input class="fi price-input" type="number" min="0" value="${item.actual||0}" placeholder="Paid" onchange="updatePrice('${item.id}','act',this.value)" title="Actual paid" style="background:var(--yellow-lt)" />
+        </div>`:''}
+        <button class="del-btn" onclick="delGearItem('${item.id}')">×</button>`;
+      cc.appendChild(row);
+    });
+  });
+}
+function togglePacked(id){const g=gear.find(x=>x.id===id);if(!g)return;g.packed=!g.packed;saveGear();renderGear();}
+function toggleOwned(id){const g=gear.find(x=>x.id===id);if(!g)return;g.owned=!g.owned;if(g.owned){g.price=0;g.actual=0;}saveGear();renderGear();toast(g.owned?'Marked as owned ✓':'Marked as needed');}
+let _priceTimer=null;
+function updatePrice(id,type,val){
+  const g=gear.find(x=>x.id===id);if(!g)return;
+  if(type==='est')g.price=parseFloat(val)||0;else g.actual=parseFloat(val)||0;
+  // Debounce: save + update totals only, no full DOM rebuild
+  clearTimeout(_priceTimer);
+  _priceTimer=setTimeout(()=>{
+    saveGear();
+    updateGearTotals();
+  },400);
+}
+function updateGearTotals(){
+  const notOwned=gear.filter(g=>!g.owned);
+  document.getElementById('gear-est').textContent=fmt(notOwned.reduce((s,g)=>s+(g.price||0),0));
+  document.getElementById('gear-actual').textContent=fmt(notOwned.reduce((s,g)=>s+(g.actual||0),0));
+  // Update per-category totals in-place
+  gearCats.forEach(cat=>{
+    const items=gear.filter(g=>g.cat===cat&&!g.owned);
+    const cid='gc_'+cat.replace(/\W/g,'_');
+    const sec=document.getElementById(cid);
+    if(!sec)return;
+    const totalEl=sec.parentElement?.querySelector('.cat-total');
+    if(totalEl)totalEl.textContent='Est: '+fmt(items.reduce((s,g)=>s+(g.price||0),0))+' · Paid: '+fmt(items.reduce((s,g)=>s+(g.actual||0),0));
+  });
+}
+function addGearItem(){
+  const name=document.getElementById('ng-name').value.trim();if(!name)return;
+  const cat=document.getElementById('ng-cat').value,note=document.getElementById('ng-note').value.trim();
+  const price=parseFloat(document.getElementById('ng-price').value)||0;
+  const priority=document.getElementById('ng-priority').value,owned=document.getElementById('ng-owned').value==='1';
+  gear.push({id:uid(),cat,name,note,priority,owned,packed:false,price:owned?0:price,actual:0});
+  document.getElementById('ng-name').value='';document.getElementById('ng-note').value='';document.getElementById('ng-price').value='';
+  saveGear();renderGear();toast('Item added 🎒');
+}
+function addGearCat(){const name=prompt('New category name:');if(!name?.trim())return;if(gearCats.includes(name.trim())){toast('Already exists!');return;}gearCats.push(name.trim());saveGear();renderGear();toast('Category added!');}
+function delGearItem(id){gear=gear.filter(g=>g.id!==id);saveGear();renderGear();toast('Item removed');}
+function delGearCat(cat){if(!confirm(`Delete "${cat}" and all items in it?`))return;gear=gear.filter(g=>g.cat!==cat);gearCats=gearCats.filter(c=>c!==cat);saveGear();renderGear();toast('Category removed');}
+
+// ════════ JOURNEY ══════════════════════════════════════════════════
+function saveStops(){S.set('vp4_stops',stops);}
+const regionClass={North:'region-north',Northeast:'region-northeast',South:'region-south',Central:'region-central',Other:'region-other'};
+let _prevVisited=stops.filter(s=>s.status==='visited').length;
+function renderStops(){
+  const wl=stops.filter(s=>s.status==='wishlist').length,vis=stops.filter(s=>s.status==='visited').length;
+  const pct=stops.length?Math.round(vis/stops.length*100):0;
+  document.getElementById('journey-prog-label').textContent=`${vis} of ${stops.length} visited`;
+  document.getElementById('journey-prog-fill').style.width=pct+'%';
+  document.getElementById('journey-pct').textContent=pct+'%';
+  document.getElementById('journey-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-num" style="color:var(--yellow)">🌟 ${wl}</div><div class="stat-label">Wishlist</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--teal)">✅ ${vis}</div><div class="stat-label">Visited</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--orange)">${stops.length}</div><div class="stat-label">Total places</div></div>`;
+  const c=document.getElementById('stops-list');c.innerHTML='';
+  if(!stops.length){c.innerHTML='<div class="empty"><div class="empty-big">🗺️</div>No places yet — start dreaming!</div>';return;}
+  stops.forEach((stop,i)=>{
+    const sv=stop.status==='visited';
+    const rc=regionClass[stop.region]||'region-other';
+    const card=document.createElement('div');card.className='stop-card'+(sv?' sv':'');
+    card.innerHTML=`
+      <div class="stop-top">
+        <div class="stop-circle ${sv?'sv':''}">${sv?'✓':(i+1)}</div>
+        <div class="stop-info">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px">
+            <div class="stop-name">${esc(stop.name)}</div>
+            <span class="sticker ${rc}" style="font-size:9px">${esc(stop.region)}</span>
+          </div>
+          <div id="nd-${stop.id}" class="stop-notes" style="${stop.notes?'':'color:var(--ink3);font-style:italic'}">${stop.notes?esc(stop.notes):'No notes yet...'}</div>
+          <div id="ne-${stop.id}" style="display:none;margin-top:8px">
+            <textarea class="notes-area" id="nta-${stop.id}" rows="3">${esc(stop.notes)}</textarea>
+            <div style="display:flex;gap:8px;margin-top:6px"><button class="btn btn-p btn-sm" onclick="saveNotes('${stop.id}')">Save</button><button class="btn btn-g btn-sm" onclick="cancelEdit('${stop.id}')">Cancel</button></div>
+          </div>
+        </div>
+        <div class="stop-actions">
+          <span class="vbtn ${sv?'vbtn-sv':'vbtn-wl'}" onclick="toggleVisited('${stop.id}')">${sv?'✅ Visited':'🌟 Wishlist'}</span>
+          <button class="seb" onclick="editNotes('${stop.id}')">✏️</button>
+          <button class="seb" onclick="moveStop('${stop.id}',-1)" ${i===0?'disabled':''}>↑</button>
+          <button class="seb" onclick="moveStop('${stop.id}',1)" ${i===stops.length-1?'disabled':''}>↓</button>
+          <button class="seb" style="border-color:#FECACA;color:var(--red)" onclick="delStop('${stop.id}')">×</button>
+        </div>
+      </div>
+      <div class="stop-photos">
+        <div class="photo-label">📷 Photos</div>
+        <div class="photo-grid" id="sp-${stop.id}"></div>
+      </div>`;
+    c.appendChild(card);
+    const pg=document.getElementById('sp-'+stop.id);
+    (stop.photos||[]).forEach(photo=>{
+      const wrap=document.createElement('div');wrap.className='photo-thumb-wrap';
+      const img=document.createElement('img');img.className='photo-thumb';img.src=photo.data;img.alt='photo';
+      img.onclick=()=>openLightbox(photo,'stop',stop.id);
+      wrap.appendChild(img);
+      if(photo.caption){const cap=document.createElement('div');cap.className='photo-caption-badge';cap.textContent=photo.caption;wrap.appendChild(cap);}
+      pg.appendChild(wrap);
+    });
+    const ab=document.createElement('div');ab.className='photo-add-btn';ab.innerHTML=`<span>📷</span><small>add</small>`;ab.onclick=()=>pickPhoto(stop.id,'','stop');pg.appendChild(ab);
+  });
+}
+function toggleVisited(id){
+  const s=stops.find(x=>x.id===id);if(!s)return;
+  s.status=s.status==='visited'?'wishlist':'visited';
+  saveStops();
+  const nowVisited=stops.filter(x=>x.status==='visited').length;
+  if(nowVisited>_prevVisited&&nowVisited===stops.length)fireConfetti();
+  _prevVisited=nowVisited;
+  renderStops();
+  toast(s.status==='visited'?'Visited! 🎉':'Back to wishlist 🌟');
+}
+function editNotes(id){document.getElementById('nd-'+id).style.display='none';document.getElementById('ne-'+id).style.display='block';document.getElementById('nta-'+id).focus();}
+function cancelEdit(id){document.getElementById('nd-'+id).style.display='';document.getElementById('ne-'+id).style.display='none';}
+function saveNotes(id){const s=stops.find(x=>x.id===id);if(!s)return;s.notes=document.getElementById('nta-'+id).value.trim();saveStops();renderStops();toast('Notes saved ✓');}
+function addStop(){
+  const name=document.getElementById('ns-name').value.trim();if(!name)return;
+  stops.push({id:uid(),name,region:document.getElementById('ns-region').value,notes:document.getElementById('ns-notes').value.trim(),status:document.getElementById('ns-status').value,photos:[]});
+  document.getElementById('ns-name').value='';document.getElementById('ns-notes').value='';
+  saveStops();renderStops();toast('Place added! 🗺️');
+}
+function delStop(id){stops=stops.filter(s=>s.id!==id);saveStops();renderStops();toast('Removed');}
+function moveStop(id,dir){const i=stops.findIndex(s=>s.id===id),ni=i+dir;if(ni<0||ni>=stops.length)return;[stops[i],stops[ni]]=[stops[ni],stops[i]];saveStops();renderStops();}
+
+// ════════ TIMELINE ══════════════════════════════════════════════════
+function saveMilestones(){S.set('vp4_milestones',milestones);}
+
+function buildTimelineEntries(){
+  // Auto-pull: phase photos with date
+  const phaseEntries=[];
+  phases.forEach(ph=>{
+    (ph.photos||[]).forEach(photo=>{
+      if(photo.data)phaseEntries.push({
+        id:'ph_'+photo.id,type:'phase-auto',
+        title:ph.name+' — '+(photo.tag==='before'?'Before 📍':'After ✅'),
+        date:photo.date||today(),
+        note:photo.caption||'',
+        photos:[photo],
+        phaseId:ph.id,
+        photoId:photo.id,
+      });
+    });
+  });
+  // Manual milestones
+  const manualEntries=milestones.map(m=>({...m,type:'manual'}));
+  // Merge and sort by date desc
+  const all=[...phaseEntries,...manualEntries];
+  all.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  return all;
+}
+
+function renderTimeline(){
+  const entries=buildTimelineEntries();
+  const c=document.getElementById('timeline-entries');c.innerHTML='';
+  if(!entries.length){
+    c.innerHTML=`<div class="tl-empty-state"><span class="tl-van-emoji">🚐</span><div style="font-family:'Lilita One',cursive;font-size:22px;margin-bottom:8px">No moments yet!</div><div style="color:var(--ink3);font-size:13px">Upload Before/After photos in the Renovation tab,<br>or add a milestone below to start the story.</div></div>`;
+    return;
+  }
+  entries.forEach((entry,idx)=>{
+    const div=document.createElement('div');div.className='tl-entry';
+    div.style.animationDelay=(idx*0.04)+'s';
+    const dotClass='tl-dot '+(entry.type)+((entry.photos&&entry.photos.length)?' has-photo':'');
+    div.innerHTML=`
+      <div class="${dotClass}"></div>
+      <div class="tl-card">
+        <div class="tl-meta">
+          <span class="tl-date">${fmtDate(entry.date)}</span>
+          <span class="${entry.type==='manual'?'tl-manual-tag':'tl-phase-tag'}">${entry.type==='manual'?'✨ Milestone':'🔧 Renovation'}</span>
+        </div>
+        <div class="tl-title">${esc(entry.title)}</div>
+        ${entry.note?`<div class="tl-note">${esc(entry.note)}</div>`:''}
+        <div class="tl-photos" id="tlp-${entry.id}"></div>
+        ${entry.type==='manual'?`<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+          <button class="btn btn-g btn-sm" onclick="editMilestone('${entry.id}')">✏️ Edit</button>
+          <button class="btn btn-d btn-sm" onclick="delMilestone('${entry.id}')">Remove</button>
+        </div>`:''}
+      </div>`;
+    c.appendChild(div);
+    const pg=document.getElementById('tlp-'+entry.id);
+    if(entry.type==='manual'){
+      (entry.photos||[]).forEach(photo=>{
+        const img=document.createElement('img');img.className='tl-thumb';img.src=photo.data;
+        img.onclick=()=>openLightbox(photo,'milestone',entry.id);pg.appendChild(img);
+      });
+      const ab=document.createElement('div');ab.className='tl-add-photo';ab.innerHTML=`<span>📷</span><span>add photo</span>`;
+      ab.onclick=()=>pickPhoto(entry.id,'','milestone');pg.appendChild(ab);
+    } else {
+      // phase photo — shown read-only
+      (entry.photos||[]).forEach(photo=>{
+        const img=document.createElement('img');img.className='tl-thumb';img.src=photo.data;
+        img.onclick=()=>openLightbox(photo,'phase',entry.phaseId);pg.appendChild(img);
+      });
+    }
+  });
+}
+
+function addMilestone(){
+  const title=document.getElementById('tl-title').value.trim();if(!title)return;
+  const date=document.getElementById('tl-date').value||today();
+  const note=document.getElementById('tl-note').value.trim();
+  milestones.push({id:uid(),title,date,note,photos:[],type:'manual'});
+  document.getElementById('tl-title').value='';document.getElementById('tl-note').value='';document.getElementById('tl-date').value='';
+  saveMilestones();renderTimeline();toast('Milestone added 🎉');
+}
+
+function delMilestone(id){
+  if(!confirm('Remove this milestone?'))return;
+  milestones=milestones.filter(m=>m.id!==id);saveMilestones();renderTimeline();toast('Removed');
+}
+
+function editMilestone(id){
+  const m=milestones.find(x=>x.id===id);if(!m)return;
+  const newTitle=prompt('Edit title:',m.title);if(newTitle===null)return;
+  const newNote=prompt('Edit note:',m.note);
+  if(newTitle.trim())m.title=newTitle.trim();
+  if(newNote!==null)m.note=newNote.trim();
+  saveMilestones();renderTimeline();toast('Updated ✓');
+}
+
+// Set default date for timeline form
+document.getElementById('tl-date').value=today();
+
+// ════════ CONFETTI ══════════════════════════════════════════════════
+function fireConfetti(){
+  const canvas=document.getElementById('confetti-canvas');
+  const ctx2=canvas.getContext('2d');
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const pieces=[];const colors=['#F26419','#F7C948','#2A9D8F','#E07A9C','#3A7D44'];
+  for(let i=0;i<80;i++){pieces.push({x:Math.random()*canvas.width,y:-10,r:Math.random()*8+3,c:colors[Math.floor(Math.random()*colors.length)],vx:(Math.random()-.5)*4,vy:Math.random()*3+2,rot:Math.random()*360,vr:(Math.random()-.5)*8});}
+  let frame=0;
+  function draw(){
+    ctx2.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;ctx2.save();ctx2.translate(p.x,p.y);ctx2.rotate(p.rot*Math.PI/180);ctx2.fillStyle=p.c;ctx2.fillRect(-p.r/2,-p.r/2,p.r,p.r);ctx2.restore();});
+    frame++;if(frame<120)requestAnimationFrame(draw);else ctx2.clearRect(0,0,canvas.width,canvas.height);
+  }
+  draw();
+  toast('🎉 ALL PLACES VISITED! Amazing!');
+}
+
+// ════════ EXPORT / IMPORT ══════════════════════════════════════════
+function openModal(){document.getElementById('modal-overlay').classList.add('show');}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('show');}
+document.getElementById('modal-overlay').onclick=function(e){if(e.target===this)closeModal();};
+
+function exportData(){
+  const data={phases,gearCats,gear,stops,milestones,exportedAt:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='vanagon-project-'+today()+'.json';a.click();
+  URL.revokeObjectURL(url);closeModal();toast('Exported! 💾');
+}
+
+function importData(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!confirm('Import this file? This will overwrite all current data.'))return;
+      if(data.phases)phases=data.phases;
+      if(data.gearCats)gearCats=data.gearCats;
+      if(data.gear)gear=data.gear;
+      if(data.stops)stops=data.stops;
+      if(data.milestones)milestones=data.milestones;
+      S.set('vp4_phases',phases);S.set('vp4_gearCats',gearCats);S.set('vp4_gear',gear);S.set('vp4_stops',stops);S.set('vp4_milestones',milestones);
+      renderPhases();renderGear();renderStops();renderTimeline();
+      closeModal();toast('Imported! ✓');
+    }catch{toast('Invalid file 😅');}
+  };
+  reader.readAsText(file);
+  event.target.value='';
+}
+
+// ════════ ENTER KEYS ════════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    if(document.activeElement.id==='new-phase-input')addPhase();
+    if(document.activeElement.id==='ng-name')addGearItem();
+    if(document.activeElement.id==='ns-name')document.getElementById('ns-region').focus();
+    if(document.activeElement.id==='tl-title')document.getElementById('tl-date').focus();
+  }
+});
+
+// ════════ INIT ════════════════════════════════════════════════════
+renderPhases();
+renderGear();
+renderStops();
+
+// ════════ SERVICE WORKER (PWA offline support) ═════════════════════
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
