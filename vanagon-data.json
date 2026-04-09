@@ -5,14 +5,7 @@
       "name": "Bodywork & paint",
       "open": true,
       "photos": [],
-      "tasks": [
-        {
-          "id": "9b47vqt",
-          "name": "Colour repair — driver side panel",
-          "note": "Rust treatment first",
-          "status": "done"
-        }
-      ]
+      "tasks": []
     },
     {
       "id": "foizqb8",
@@ -537,5 +530,5 @@
       "type": "manual"
     }
   ],
-  "syncedAt": "2026-04-09T11:01:39.116Z"
+  "syncedAt": "2026-04-09T12:42:47.989Z"
 }
