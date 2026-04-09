@@ -31,25 +31,25 @@
   --header-h:60px;
 }
 [data-dark] {
-  --bg:#1A1814;--bg2:#232118;--bg3:#2C2920;
-  --ink:#F5F0E8;--ink2:#C4B99A;--ink3:#7A7060;
-  --card:#242018;--card-border:#3A3628;
-  --orange:#F26419;--orange-lt:#3A2010;
-  --yellow:#F7C948;--yellow-lt:#2E2608;
-  --teal:#2A9D8F;--teal-lt:#0C2E2A;
-  --pink:#E07A9C;--pink-lt:#2E1020;
-  --green:#3A7D44;--green-lt:#0E2214;
-  --red:#D94F3D;--red-lt:#2E0E0A;
-  --blue:#3B82F6;--blue-lt:#0E1830;
-  --purple:#7C3AED;--purple-lt:#180E30;
-  --shadow:3px 3px 0px #0A0908;
-  --shadow-h:5px 5px 0px #0A0908;
+  --bg:#0F0E0B;--bg2:#161410;--bg3:#1E1B15;
+  --ink:#EDE8DC;--ink2:#B8AD94;--ink3:#6A6254;
+  --card:#1A1814;--card-border:#2C2820;
+  --orange:#E85D15;--orange-lt:#2A1608;
+  --yellow:#E8B830;--yellow-lt:#241C04;
+  --teal:#229688;--teal-lt:#08201C;
+  --pink:#D4708E;--pink-lt:#240C18;
+  --green:#347040;--green-lt:#0A1C0E;
+  --red:#C94535;--red-lt:#220806;
+  --blue:#3070E0;--blue-lt:#080E28;
+  --purple:#6A30D0;--purple-lt:#140828;
+  --shadow:2px 2px 0px #050403;
+  --shadow-h:4px 4px 0px #050403;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{overflow-x:hidden;width:100%;}
 body{font-family:'Nunito','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;transition:background .3s,color .3s;overflow-x:hidden;width:100%;position:relative;}
 body:not([data-dark]){background-image:radial-gradient(circle,#DDD5BE 1px,transparent 1px);background-size:28px 28px;}
-body[data-dark]{background-image:radial-gradient(circle,#2C2920 1px,transparent 1px);background-size:28px 28px;}
+body[data-dark]{background-image:radial-gradient(circle,#1E1B15 1px,transparent 1px);background-size:28px 28px;}
 
 /* HEADER */
 header{background:var(--ink);padding:0 20px;padding-top:var(--sat);min-height:calc(var(--header-h) + var(--sat));display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200;border-bottom:3px solid var(--orange);}
@@ -198,6 +198,12 @@ main{max-width:940px;margin:0 auto;padding:28px 16px calc(80px + var(--sab));}
 .empty-big{font-size:32px;margin-bottom:8px;}
 
 /* GEAR */
+.gear-row-name{display:flex;align-items:flex-start;gap:8px;width:100%;}
+.gear-row-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-left:28px;margin-top:4px;}
+.task-row.gear-item{flex-direction:column;align-items:stretch;}
+.task-row.gear-item .del-btn{opacity:0;}
+.task-row.gear-item:hover .del-btn{opacity:1;}
+@media(hover:none){.task-row.gear-item .del-btn{opacity:.5;}}
 .price-input{width:72px;min-width:0;font-family:'Space Mono',monospace;font-size:11px;text-align:right;}
 .cat-total{font-family:'Space Mono',monospace;font-size:11px;color:var(--teal);font-weight:700;text-align:right;margin-top:8px;padding-top:8px;border-top:1.5px dashed var(--card-border);}
 .owned-toggle{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;border:2px solid;cursor:pointer;flex-shrink:0;}
@@ -270,6 +276,13 @@ main{max-width:940px;margin:0 auto;padding:28px 16px calc(80px + var(--sab));}
 .tl-legend-item{display:flex;align-items:center;gap:6px;}
 .tl-legend-dot{width:12px;height:12px;border-radius:50%;border:2px solid;}
 
+/* DRAG & DROP */
+.drag-handle{cursor:grab;color:var(--ink3);padding:0 4px;font-size:16px;flex-shrink:0;touch-action:none;user-select:none;}
+.drag-handle:active{cursor:grabbing;}
+.dragging{opacity:.4;border:2px dashed var(--orange)!important;}
+.drag-over{border-top:3px solid var(--orange)!important;}
+.drag-ghost{position:fixed;pointer-events:none;opacity:.85;z-index:9000;border-radius:var(--r);background:var(--card);border:2px solid var(--orange);padding:10px 14px;font-family:'Lilita One',cursive;font-size:15px;color:var(--ink);box-shadow:4px 4px 0 var(--orange);max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
 /* EXPORT/IMPORT MODAL */
 #modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:8000;align-items:center;justify-content:center;}
 #modal-overlay.show{display:flex;}
@@ -308,18 +321,33 @@ main{max-width:940px;margin:0 auto;padding:28px 16px calc(80px + var(--sab));}
   .bottom-nav button{
     flex:1;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:3px;
+    gap:2px;
     background:transparent;border:none;cursor:pointer;
-    color:rgba(255,255,255,.45);
+    color:rgba(255,255,255,.4);
     font-family:'Space Mono',monospace;
-    font-size:9px;font-weight:700;
-    letter-spacing:.04em;text-transform:uppercase;
+    font-size:8px;font-weight:700;
+    letter-spacing:.03em;text-transform:uppercase;
     transition:color .15s;
-    padding:0;
+    padding:6px 2px;
+    min-width:0;overflow:hidden;
   }
-  .bottom-nav button .bnav-icon{font-size:18px;line-height:1;}
+  .bottom-nav button .bnav-icon{
+    font-size:20px;line-height:1;
+    width:36px;height:28px;
+    border-radius:99px;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .15s;
+    flex-shrink:0;
+  }
+  .bottom-nav button .bnav-label{
+    font-size:8px;line-height:1;
+    white-space:nowrap;overflow:hidden;
+    text-overflow:clip;
+    max-width:100%;
+    display:block;
+  }
   .bottom-nav button.active{color:var(--orange);}
-  .bottom-nav button.active .bnav-icon{transform:scale(1.15);}
+  .bottom-nav button.active .bnav-icon{background:var(--orange);font-size:17px;}
 
   /* Main content clears bottom nav */
   main{padding:16px 12px calc(72px + var(--sab));}
@@ -360,10 +388,17 @@ main{max-width:940px;margin:0 auto;padding:28px 16px calc(80px + var(--sab));}
   .task-nt{font-size:12px;}
   .sp{font-size:11px;padding:4px 10px;}
 
-  /* Prices — stack on mobile */
-  .price-actual{flex-wrap:wrap;gap:4px;}
-  .price-input{width:80px;font-size:13px;}
-  .price-sep{display:none;}
+  /* Gear row: name takes full top row, controls wrap below */
+  .gear-row-name{width:100%;display:flex;align-items:flex-start;gap:8px;}
+  .gear-row-controls{width:100%;display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-left:28px;}
+  /* Override default task-row flex for gear items */
+  .task-row.gear-item{flex-direction:column;align-items:stretch;}
+  .task-row.gear-item .del-btn{opacity:.5;margin-left:auto;}
+
+  /* Prices */
+  .price-actual{flex-wrap:nowrap;gap:4px;}
+  .price-input{width:70px;font-size:13px;padding:5px 6px;}
+  .price-sep{display:inline;}
 
   /* Stop actions — full width row */
   .stop-top{flex-wrap:wrap;}
@@ -417,16 +452,16 @@ main{max-width:940px;margin:0 auto;padding:28px 16px calc(80px + var(--sab));}
 <!-- MOBILE BOTTOM NAV -->
 <nav class="bottom-nav" id="bottom-nav">
   <button class="active" onclick="switchTab('reno')">
-    <span class="bnav-icon">🔧</span><span>Reno</span>
+    <span class="bnav-icon">🔧</span><span class="bnav-label">Reno</span>
   </button>
   <button onclick="switchTab('gear')">
-    <span class="bnav-icon">🎒</span><span>Gear</span>
+    <span class="bnav-icon">🎒</span><span class="bnav-label">Gear</span>
   </button>
   <button onclick="switchTab('journey')">
-    <span class="bnav-icon">🗺️</span><span>Journey</span>
+    <span class="bnav-icon">🗺️</span><span class="bnav-label">Journey</span>
   </button>
   <button onclick="switchTab('timeline')">
-    <span class="bnav-icon">📸</span><span>Timeline</span>
+    <span class="bnav-icon">📸</span><span class="bnav-label">Timeline</span>
   </button>
 </nav>
 
@@ -694,12 +729,13 @@ function renderPhases(){
   document.getElementById('overall-fill').style.width=pct+'%';
   document.getElementById('overall-pct').textContent=pct+'%';
   if(!phases.length){c.innerHTML='<div class="empty"><div class="empty-big">🔧</div>No phases yet!</div>';return;}
-  phases.forEach(ph=>{
+  phases.forEach((ph,pi)=>{
     const pd=ph.tasks.filter(t=>t.status==='done').length,pt=ph.tasks.length;
     const ppct=pt?Math.round(pd/pt*100):0;
-    const div=document.createElement('div');div.className='card';
+    const div=document.createElement('div');div.className='card';div.dataset.dragIdx=pi;
     div.innerHTML=`
       <div class="phase-hdr" onclick="togglePhase('${ph.id}')">
+        <span class="drag-handle" onclick="event.stopPropagation()">⠿</span>
         <div class="phase-name">${esc(ph.name)}</div>
         <span class="sticker s-gray" style="font-size:10px">${pd}/${pt}</span>
         <div class="prog-wrap" style="width:60px;margin:0"><div class="prog-fill" style="width:${ppct}%"></div></div>
@@ -721,6 +757,7 @@ function renderPhases(){
         </div>
       </div>`;
     c.appendChild(div);
+    makeDraggable(div, pi, 'phase');
     // tasks
     const tc=document.getElementById('ptasks-'+ph.id);
     if(!ph.tasks.length){tc.innerHTML='<div style="color:var(--ink3);font-size:12px;font-style:italic;padding:4px 0">No tasks yet</div>';}
@@ -845,28 +882,37 @@ function renderGear(){
     <div class="stat-card"><div class="stat-num" style="color:var(--teal)">${packed}</div><div class="stat-label">Packed</div></div>
     <div class="stat-card"><div class="stat-num" style="color:var(--pink)">${total-owned}</div><div class="stat-label">To buy</div></div>`;
   const c=document.getElementById('gear-list');c.innerHTML='';
-  gearCats.forEach(cat=>{
+  gearCats.forEach((cat,ci)=>{
     const items=gear.filter(g=>g.cat===cat);if(!items.length)return;
     const notOwnedItems=items.filter(g=>!g.owned);
     const catEst=notOwnedItems.reduce((s,g)=>s+(g.price||0),0);
     const catAct=notOwnedItems.reduce((s,g)=>s+(g.actual||0),0);
     const cid='gc_'+cat.replace(/\W/g,'_');
-    const sec=document.createElement('div');sec.className='card';
-    sec.innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span class="sticker s-orange">${esc(cat)}</span><span style="font-size:12px;color:var(--ink3)">${items.length}</span><button class="btn btn-d btn-sm" style="margin-left:auto" onclick="delGearCat('${esc(cat)}')">Remove</button></div><div id="${cid}"></div><div class="cat-total">Est: ${fmt(catEst)} · Paid: ${fmt(catAct)}</div>`;
+    const sec=document.createElement('div');sec.className='card';sec.dataset.dragIdx=ci;
+    sec.innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span class="drag-handle">⠿</span><span class="sticker s-orange">${esc(cat)}</span><span style="font-size:12px;color:var(--ink3)">${items.length}</span><button class="btn btn-d btn-sm" style="margin-left:auto" onclick="delGearCat('${esc(cat)}')">Remove</button></div><div id="${cid}"></div><div class="cat-total">Est: ${fmt(catEst)} · Paid: ${fmt(catAct)}</div>`;
     c.appendChild(sec);
+    makeDraggable(sec, ci, 'gearcat');
     const cc=document.getElementById(cid);
     items.forEach(item=>{
-      const row=document.createElement('div');row.className='task-row';
-      row.innerHTML=`<div class="cb ${item.packed?'done':''}" onclick="togglePacked('${item.id}')"></div>
-        <div class="task-body"><div class="task-nm ${item.packed?'done':''}">${esc(item.name)}</div>${item.note?`<div class="task-nt">${esc(item.note)}</div>`:''}</div>
-        <span class="owned-toggle ${item.owned?'own-yes':'own-no'}" onclick="toggleOwned('${item.id}')">${item.owned?'owned':'need'}</span>
-        <span class="sticker ${item.priority==='must'?'s-pink':'s-gray'}" style="font-size:9px">${item.priority}</span>
-        ${!item.owned?`<div class="price-actual">
-          <input class="fi price-input" type="number" min="0" value="${item.price||0}" placeholder="Est" onchange="updatePrice('${item.id}','est',this.value)" title="Estimated price" />
-          <span class="price-sep">/</span>
-          <input class="fi price-input" type="number" min="0" value="${item.actual||0}" placeholder="Paid" onchange="updatePrice('${item.id}','act',this.value)" title="Actual paid" style="background:var(--yellow-lt)" />
-        </div>`:''}
-        <button class="del-btn" onclick="delGearItem('${item.id}')">×</button>`;
+      const row=document.createElement('div');row.className='task-row gear-item';
+      row.innerHTML=`
+        <div class="gear-row-name">
+          <div class="cb ${item.packed?'done':''}" onclick="togglePacked('${item.id}')"></div>
+          <div class="task-body">
+            <div class="task-nm ${item.packed?'done':''}">${esc(item.name)}</div>
+            ${item.note?`<div class="task-nt">${esc(item.note)}</div>`:''}
+          </div>
+          <button class="del-btn" onclick="delGearItem('${item.id}')">×</button>
+        </div>
+        <div class="gear-row-controls">
+          <span class="owned-toggle ${item.owned?'own-yes':'own-no'}" onclick="toggleOwned('${item.id}')">${item.owned?'owned':'need'}</span>
+          <span class="sticker ${item.priority==='must'?'s-pink':'s-gray'}" style="font-size:9px">${item.priority}</span>
+          ${!item.owned?`<div class="price-actual" style="margin-left:auto">
+            <input class="fi price-input" type="number" min="0" value="${item.price||0}" placeholder="Est" onchange="updatePrice('${item.id}','est',this.value)" title="Estimated" />
+            <span class="price-sep">/</span>
+            <input class="fi price-input" type="number" min="0" value="${item.actual||0}" placeholder="Paid" onchange="updatePrice('${item.id}','act',this.value)" title="Actual paid" style="background:var(--yellow-lt)" />
+          </div>`:''}
+        </div>`;
       cc.appendChild(row);
     });
   });
@@ -930,10 +976,13 @@ function renderStops(){
   stops.forEach((stop,i)=>{
     const sv=stop.status==='visited';
     const rc=regionClass[stop.region]||'region-other';
-    const card=document.createElement('div');card.className='stop-card'+(sv?' sv':'');
+    const card=document.createElement('div');card.className='stop-card'+(sv?' sv':'');card.dataset.dragIdx=i;
     card.innerHTML=`
       <div class="stop-top">
-        <div class="stop-circle ${sv?'sv':''}">${sv?'✓':(i+1)}</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+          <span class="drag-handle" style="font-size:18px">⠿</span>
+          <div class="stop-circle ${sv?'sv':''}">${sv?'✓':(i+1)}</div>
+        </div>
         <div class="stop-info">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px">
             <div class="stop-name">${esc(stop.name)}</div>
@@ -948,8 +997,6 @@ function renderStops(){
         <div class="stop-actions">
           <span class="vbtn ${sv?'vbtn-sv':'vbtn-wl'}" onclick="toggleVisited('${stop.id}')">${sv?'✅ Visited':'🌟 Wishlist'}</span>
           <button class="seb" onclick="editNotes('${stop.id}')">✏️</button>
-          <button class="seb" onclick="moveStop('${stop.id}',-1)" ${i===0?'disabled':''}>↑</button>
-          <button class="seb" onclick="moveStop('${stop.id}',1)" ${i===stops.length-1?'disabled':''}>↓</button>
           <button class="seb" style="border-color:#FECACA;color:var(--red)" onclick="delStop('${stop.id}')">×</button>
         </div>
       </div>
@@ -958,6 +1005,7 @@ function renderStops(){
         <div class="photo-grid" id="sp-${stop.id}"></div>
       </div>`;
     c.appendChild(card);
+    makeDraggable(card, i, 'stop');
     const pg=document.getElementById('sp-'+stop.id);
     (stop.photos||[]).forEach(photo=>{
       const wrap=document.createElement('div');wrap.className='photo-thumb-wrap';
@@ -1052,7 +1100,7 @@ function renderTimeline(){
         const img=document.createElement('img');img.className='tl-thumb';img.src=photo.data;
         img.onclick=()=>openLightbox(photo,'milestone',entry.id);pg.appendChild(img);
       });
-      const ab=document.createElement('div');ab.className='tl-add-photo';ab.innerHTML=`<span>📷</span><span>add photo</span>`;
+      const ab=document.createElement('div');ab.className='tl-add-photo';ab.innerHTML=`<span>📷</span><span>ADD</span>`;
       ab.onclick=()=>pickPhoto(entry.id,'','milestone');pg.appendChild(ab);
     } else {
       // phase photo — shown read-only
@@ -1150,6 +1198,94 @@ document.addEventListener('keydown',e=>{
     if(document.activeElement.id==='tl-title')document.getElementById('tl-date').focus();
   }
 });
+
+// ════════ DRAG & DROP ENGINE ════════════════════════════════════════
+// Works with both mouse and touch for iPhone compatibility
+let _drag={active:false,type:null,fromIdx:null,ghost:null,startX:0,startY:0};
+
+function makeDraggable(el, idx, type){
+  const handle=el.querySelector('.drag-handle');
+  if(!handle)return;
+
+  // Mouse
+  handle.addEventListener('mousedown', e=>{
+    e.preventDefault();
+    startDrag(e.clientX, e.clientY, idx, type, el);
+  });
+
+  // Touch — iPhone
+  handle.addEventListener('touchstart', e=>{
+    const t=e.touches[0];
+    startDrag(t.clientX, t.clientY, idx, type, el);
+  },{passive:true});
+}
+
+function startDrag(x, y, idx, type, el){
+  _drag.active=true; _drag.type=type; _drag.fromIdx=idx;
+  _drag.startX=x; _drag.startY=y;
+
+  // Ghost label
+  const ghost=document.createElement('div');
+  ghost.className='drag-ghost';
+  ghost.textContent=el.querySelector('.phase-name, .sticker, .stop-name')?.textContent||'Moving…';
+  ghost.style.left=(x+12)+'px'; ghost.style.top=(y-18)+'px';
+  document.body.appendChild(ghost);
+  _drag.ghost=ghost;
+
+  el.classList.add('dragging');
+  _drag.el=el;
+
+  const moveH=e=>moveDrag(e.clientX, e.clientY);
+  const moveT=e=>{const t=e.touches[0];moveDrag(t.clientX,t.clientY);};
+  const upH=e=>endDrag(e.clientX, e.clientY);
+  const upT=e=>{const t=e.changedTouches[0];endDrag(t.clientX,t.clientY);};
+
+  document.addEventListener('mousemove',moveH);
+  document.addEventListener('touchmove',moveT,{passive:true});
+  document.addEventListener('mouseup',upH,{once:true});
+  document.addEventListener('touchend',upT,{once:true});
+
+  _drag.cleanup=()=>{
+    document.removeEventListener('mousemove',moveH);
+    document.removeEventListener('touchmove',moveT);
+  };
+}
+
+function moveDrag(x, y){
+  if(!_drag.active)return;
+  _drag.ghost.style.left=(x+12)+'px';
+  _drag.ghost.style.top=(y-18)+'px';
+}
+
+function endDrag(x, y){
+  if(!_drag.active)return;
+  _drag.active=false;
+  if(_drag.cleanup)_drag.cleanup();
+  if(_drag.ghost){_drag.ghost.remove();_drag.ghost=null;}
+  if(_drag.el)_drag.el.classList.remove('dragging');
+
+  // Find drop target by element at point
+  const el=document.elementFromPoint(x,y);
+  const target=el?.closest('[data-drag-idx]');
+  if(!target){_drag={active:false,type:null,fromIdx:null,ghost:null};return;}
+
+  const toIdx=parseInt(target.dataset.dragIdx);
+  const from=_drag.fromIdx;
+  if(from===toIdx){_drag={active:false,type:null,fromIdx:null,ghost:null};return;}
+
+  if(_drag.type==='phase'){
+    const item=phases.splice(from,1)[0]; phases.splice(toIdx,0,item);
+    savePhases(); renderPhases();
+  } else if(_drag.type==='gearcat'){
+    const item=gearCats.splice(from,1)[0]; gearCats.splice(toIdx,0,item);
+    saveGear(); renderGear();
+  } else if(_drag.type==='stop'){
+    const item=stops.splice(from,1)[0]; stops.splice(toIdx,0,item);
+    saveStops(); renderStops();
+  }
+  toast('Reordered ✓');
+  _drag={active:false,type:null,fromIdx:null,ghost:null};
+}
 
 // ════════ INIT ════════════════════════════════════════════════════
 renderPhases();
