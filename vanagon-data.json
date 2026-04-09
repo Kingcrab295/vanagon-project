@@ -16,7 +16,7 @@
           "id": "pp1h97x",
           "name": "Colour repair — rear bumper",
           "note": "",
-          "status": "todo"
+          "status": "done"
         },
         {
           "id": "3q76flr",
@@ -71,6 +71,38 @@
       ]
     },
     {
+      "id": "lfgwl7i",
+      "name": "Electrical & power",
+      "open": false,
+      "photos": [],
+      "tasks": [
+        {
+          "id": "nm44eju",
+          "name": "Secondary 12V battery",
+          "note": "",
+          "status": "todo"
+        },
+        {
+          "id": "c5e1pak",
+          "name": "USB charging points",
+          "note": "",
+          "status": "todo"
+        },
+        {
+          "id": "sefdj5r",
+          "name": "LED interior lighting",
+          "note": "",
+          "status": "todo"
+        },
+        {
+          "id": "dc0ftut",
+          "name": "Solar panel roof mount",
+          "note": "",
+          "status": "todo"
+        }
+      ]
+    },
+    {
       "id": "r1oy4tb",
       "name": "Mechanical",
       "open": false,
@@ -113,7 +145,7 @@
   ],
   "gear": [
     {
-      "id": "l0ije5u",
+      "id": "l5f3cq7",
       "cat": "Sleeping & comfort",
       "name": "Cotton sheet set",
       "note": "Lightweight",
@@ -124,7 +156,7 @@
       "actual": 0
     },
     {
-      "id": "wsej5p4",
+      "id": "ymnzofy",
       "cat": "Sleeping & comfort",
       "name": "Sleeping bag liner",
       "note": "Highlands nights ~15°C",
@@ -135,7 +167,7 @@
       "actual": 0
     },
     {
-      "id": "psqr8y9",
+      "id": "jdjyv4t",
       "cat": "Sleeping & comfort",
       "name": "Compressible pillow x2",
       "note": "",
@@ -146,7 +178,7 @@
       "actual": 0
     },
     {
-      "id": "hivmb8e",
+      "id": "fm5mcay",
       "cat": "Sleeping & comfort",
       "name": "Blackout window covers",
       "note": "Magnetic or suction-cup",
@@ -157,7 +189,7 @@
       "actual": 0
     },
     {
-      "id": "sgstl7r",
+      "id": "8h64fiv",
       "cat": "Sleeping & comfort",
       "name": "USB fan (12V)",
       "note": "Essential for still lowland nights",
@@ -168,7 +200,7 @@
       "actual": 0
     },
     {
-      "id": "5e7s8ha",
+      "id": "yaxutem",
       "cat": "Sleeping & comfort",
       "name": "Mosquito net",
       "note": "",
@@ -179,7 +211,7 @@
       "actual": 0
     },
     {
-      "id": "rnle645",
+      "id": "8pydtoq",
       "cat": "Kitchen & cooking",
       "name": "Single burner butane stove",
       "note": "Gas at every 7-Eleven",
@@ -190,7 +222,7 @@
       "actual": 0
     },
     {
-      "id": "9lgjnfj",
+      "id": "0nbi8ts",
       "cat": "Kitchen & cooking",
       "name": "Cookpot + lid (1.5L)",
       "note": "Titanium saves weight",
@@ -201,7 +233,7 @@
       "actual": 0
     },
     {
-      "id": "z2xm5xf",
+      "id": "q46jw6l",
       "cat": "Kitchen & cooking",
       "name": "Foldable pan 20cm",
       "note": "",
@@ -212,7 +244,7 @@
       "actual": 0
     },
     {
-      "id": "594ukqi",
+      "id": "ku3cenn",
       "cat": "Kitchen & cooking",
       "name": "Spork set x2",
       "note": "",
@@ -223,7 +255,7 @@
       "actual": 0
     },
     {
-      "id": "9qacfy1",
+      "id": "pq3vsgd",
       "cat": "Kitchen & cooking",
       "name": "Flexible cutting board",
       "note": "",
@@ -234,7 +266,7 @@
       "actual": 0
     },
     {
-      "id": "3pqzp9n",
+      "id": "lhox0tz",
       "cat": "Kitchen & cooking",
       "name": "Collapsible water container 10L",
       "note": "",
@@ -245,7 +277,7 @@
       "actual": 0
     },
     {
-      "id": "yd7zusg",
+      "id": "pd6s3sv",
       "cat": "Coffee kit",
       "name": "Flair Pro 3",
       "note": "",
@@ -256,7 +288,7 @@
       "actual": 0
     },
     {
-      "id": "9srvqmh",
+      "id": "belkmow",
       "cat": "Coffee kit",
       "name": "EZpresso",
       "note": "Backup / light days",
@@ -267,7 +299,7 @@
       "actual": 0
     },
     {
-      "id": "opnnnog",
+      "id": "s3h2dtr",
       "cat": "Coffee kit",
       "name": "Hand grinder (Timemore C3)",
       "note": "No power needed",
@@ -278,7 +310,7 @@
       "actual": 0
     },
     {
-      "id": "wjmbvzv",
+      "id": "9ix8stv",
       "cat": "Coffee kit",
       "name": "Stovetop gooseneck kettle",
       "note": "Gas-compatible",
@@ -289,7 +321,7 @@
       "actual": 0
     },
     {
-      "id": "qaxuvey",
+      "id": "kzaesuh",
       "cat": "Coffee kit",
       "name": "Pocket digital scale",
       "note": "0.1g resolution",
@@ -300,7 +332,7 @@
       "actual": 0
     },
     {
-      "id": "qn1hgr9",
+      "id": "zj5s7o2",
       "cat": "Coffee kit",
       "name": "Airtight bean tin",
       "note": "250–500g",
@@ -311,7 +343,7 @@
       "actual": 0
     },
     {
-      "id": "40wqop5",
+      "id": "9mwgaqq",
       "cat": "Power & lighting",
       "name": "Portable power station 300Wh",
       "note": "e.g. Jackery 300",
@@ -322,7 +354,7 @@
       "actual": 0
     },
     {
-      "id": "m7nvqgs",
+      "id": "f4fj9qs",
       "cat": "Power & lighting",
       "name": "USB multi-port car charger",
       "note": "",
@@ -333,7 +365,7 @@
       "actual": 0
     },
     {
-      "id": "ijfw7wd",
+      "id": "b8yfpl3",
       "cat": "Power & lighting",
       "name": "LED string lights USB",
       "note": "Van interior vibes",
@@ -344,7 +376,7 @@
       "actual": 0
     },
     {
-      "id": "ows63lg",
+      "id": "9bif7c1",
       "cat": "Power & lighting",
       "name": "Headlamp x2",
       "note": "",
@@ -355,7 +387,7 @@
       "actual": 0
     },
     {
-      "id": "g8njcyl",
+      "id": "p71llnv",
       "cat": "Power & lighting",
       "name": "Solar panel 60–100W",
       "note": "Roof mount",
@@ -366,7 +398,7 @@
       "actual": 0
     },
     {
-      "id": "kqarupv",
+      "id": "l2qzloo",
       "cat": "Outdoor living",
       "name": "Camp chairs x2",
       "note": "Foldable lightweight",
@@ -377,7 +409,7 @@
       "actual": 0
     },
     {
-      "id": "u9j21tz",
+      "id": "lxujl4i",
       "cat": "Outdoor living",
       "name": "Small folding table",
       "note": "Coffee prep station outside",
@@ -388,7 +420,7 @@
       "actual": 0
     },
     {
-      "id": "qcogogl",
+      "id": "wvmrq6z",
       "cat": "Outdoor living",
       "name": "Tarp / rain canopy 3×3m",
       "note": "Thai rain is INSTANT",
@@ -399,7 +431,7 @@
       "actual": 0
     },
     {
-      "id": "5p7glzb",
+      "id": "d09thyr",
       "cat": "Outdoor living",
       "name": "Paracord 20m",
       "note": "Tarp rigging + clothesline",
@@ -410,7 +442,7 @@
       "actual": 0
     },
     {
-      "id": "04fmawy",
+      "id": "p0f0t5n",
       "cat": "Van essentials",
       "name": "T3 basic tool kit",
       "note": "Plugs, fuses, zip ties, belts",
@@ -421,7 +453,7 @@
       "actual": 0
     },
     {
-      "id": "a7dsxdj",
+      "id": "pw378b2",
       "cat": "Van essentials",
       "name": "Compact jump starter",
       "note": "Vintage van — be prepared!",
@@ -432,7 +464,7 @@
       "actual": 0
     },
     {
-      "id": "s7uh6xi",
+      "id": "fa5k59e",
       "cat": "Van essentials",
       "name": "Tyre repair kit + 12V pump",
       "note": "",
@@ -443,7 +475,7 @@
       "actual": 0
     },
     {
-      "id": "obx31p4",
+      "id": "ljjflsm",
       "cat": "Van essentials",
       "name": "First aid kit",
       "note": "",
@@ -454,7 +486,7 @@
       "actual": 0
     },
     {
-      "id": "awxt9j6",
+      "id": "ro577m7",
       "cat": "Van essentials",
       "name": "DEET insect repellent",
       "note": "Forest / water areas",
@@ -465,7 +497,7 @@
       "actual": 0
     },
     {
-      "id": "moct3aa",
+      "id": "nbugcec",
       "cat": "Van essentials",
       "name": "Sunscreen SPF50+ x2",
       "note": "",
@@ -476,7 +508,7 @@
       "actual": 0
     },
     {
-      "id": "l0vi3hs",
+      "id": "mqz59qf",
       "cat": "Van essentials",
       "name": "Wet wipes bulk",
       "note": "Outdoor shower substitute",
@@ -489,7 +521,7 @@
   ],
   "stops": [
     {
-      "id": "bgtoers",
+      "id": "l6f6ja7",
       "name": "Pai",
       "region": "North",
       "notes": "762 bends — allow extra T3 time!\nWarm springs nearby. Bamboo bridge. TikTok sunsets.",
@@ -497,7 +529,7 @@
       "photos": []
     },
     {
-      "id": "79u20gv",
+      "id": "bkrvqff",
       "name": "Mae Hong Son",
       "region": "North",
       "notes": "Remote and magical. Morning mist over the lake. Kew Kan Pae viewpoint.",
@@ -505,7 +537,7 @@
       "photos": []
     },
     {
-      "id": "uh0hxiv",
+      "id": "7oza6cy",
       "name": "Chiang Rai",
       "region": "North",
       "notes": "White Temple + Blue Temple. Hill tribe coffee farms — perfect for a coffee TikTok.",
@@ -515,7 +547,7 @@
   ],
   "milestones": [
     {
-      "id": "plrllyq",
+      "id": "wszcodn",
       "title": "Project kickoff! 🚐",
       "date": "2025-01-15",
       "note": "Officially decided to make the Vanagon dream happen. The journey begins.",
@@ -523,5 +555,5 @@
       "type": "manual"
     }
   ],
-  "syncedAt": "2026-04-09T10:25:29.950Z"
+  "syncedAt": "2026-04-09T10:25:43.304Z"
 }
