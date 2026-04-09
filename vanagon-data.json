@@ -11,24 +11,6 @@
           "name": "Colour repair — driver side panel",
           "note": "Rust treatment first",
           "status": "done"
-        },
-        {
-          "id": "pp1h97x",
-          "name": "Colour repair — rear bumper",
-          "note": "",
-          "status": "done"
-        },
-        {
-          "id": "3q76flr",
-          "name": "Surface prep & primer",
-          "note": "",
-          "status": "done"
-        },
-        {
-          "id": "rctzfmp",
-          "name": "Full respray decision",
-          "note": "Partial or full repaint?",
-          "status": "done"
         }
       ]
     },
@@ -555,5 +537,5 @@
       "type": "manual"
     }
   ],
-  "syncedAt": "2026-04-09T10:29:05.704Z"
+  "syncedAt": "2026-04-09T11:01:35.181Z"
 }
