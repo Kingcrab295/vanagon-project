@@ -64,12 +64,12 @@ self.addEventListener('fetch', e => {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Vanagon">
 <meta name="theme-color" content="#1C1A14">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="data:application/json,{%22name%22:%22Vanagon%20Project%22,%22short_name%22:%22Vanagon%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%231C1A14%22,%22theme_color%22:%22%231C1A14%22,%22orientation%22:%22portrait-primary%22,%22icons%22:[{%22src%22:%22icon.png%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22}]}">
 <link rel="apple-touch-icon" href="icon.png">
 <title>🚐 Vanagon Project</title>
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -343,38 +343,116 @@ main{max-width:940px;margin:0 auto;padding:28px 16px calc(80px + var(--sab));}
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--yellow);padding:9px 18px;border-radius:99px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;pointer-events:none;transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:9998;white-space:nowrap;border:2px solid var(--yellow);}
 #toast.show{transform:translateX(-50%) translateY(0);}
 
+/* BOTTOM NAV — mobile only */
+.bottom-nav{display:none;}
+
 /* RESPONSIVE */
-@media(max-width:600px){
-  header{padding:0 10px;padding-top:var(--sat);gap:6px;}
-  .logo{font-size:15px;}
-  nav button{font-size:9px;padding:5px 8px;letter-spacing:.03em;}
-  .icon-btn{width:30px;height:30px;font-size:13px;}
-  main{padding:16px 10px calc(70px + var(--sab));}
-  .pg-title{font-size:24px;}
-  .pg-sub{font-size:10px;margin-bottom:16px;}
+@media(max-width:640px){
+  /* Hide top nav on mobile, show bottom nav instead */
+  nav{display:none;}
+  .header-actions{margin-left:auto;}
+  .logo{font-size:17px;}
+  header{padding:0 14px;padding-top:var(--sat);min-height:calc(52px + var(--sat));gap:10px;}
+
+  /* Bottom nav bar */
+  .bottom-nav{
+    display:flex;
+    position:fixed;
+    bottom:0;left:0;right:0;
+    height:calc(56px + var(--sab));
+    padding-bottom:var(--sab);
+    background:var(--ink);
+    border-top:2px solid var(--orange);
+    z-index:200;
+    align-items:stretch;
+  }
+  .bottom-nav button{
+    flex:1;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:3px;
+    background:transparent;border:none;cursor:pointer;
+    color:rgba(255,255,255,.45);
+    font-family:'Space Mono',monospace;
+    font-size:9px;font-weight:700;
+    letter-spacing:.04em;text-transform:uppercase;
+    transition:color .15s;
+    padding:0;
+  }
+  .bottom-nav button .bnav-icon{font-size:18px;line-height:1;}
+  .bottom-nav button.active{color:var(--orange);}
+  .bottom-nav button.active .bnav-icon{transform:scale(1.15);}
+
+  /* Main content clears bottom nav */
+  main{padding:16px 12px calc(72px + var(--sab));}
+
+  /* Typography */
+  .pg-title{font-size:26px;}
+  .pg-sub{font-size:10px;margin-bottom:14px;}
+
+  /* Stats */
   .stats-grid-4{grid-template-columns:repeat(2,1fr);}
   .stats-grid-3{grid-template-columns:repeat(3,1fr);}
+  .stat-card{padding:10px 8px;}
+  .stat-num{font-size:20px;}
+  .stat-label{font-size:9px;}
+
+  /* Forms */
   .form-grid{grid-template-columns:1fr;}
   .form-full{grid-column:1;}
-  .task-row{flex-wrap:wrap;gap:6px;}
-  .task-body{min-width:calc(100% - 60px);}
-  .price-actual{flex-wrap:wrap;}
-  .price-input{width:60px;}
+  .fi{font-size:16px;} /* 16px prevents iOS zoom on focus */
+  select.fi{font-size:16px;}
+
+  /* Buttons — bigger tap targets */
+  .btn{padding:10px 16px;font-size:14px;}
+  .btn-sm{padding:7px 12px;font-size:12px;}
+
+  /* Cards */
+  .card{padding:14px 12px;margin-bottom:10px;}
+  .stop-card{padding:12px 12px;}
+
+  /* Banner */
   .banner{flex-wrap:wrap;gap:8px;padding:12px 14px;}
   .banner-bar-wrap{min-width:100%;}
-  .stop-actions{flex-wrap:wrap;gap:4px;max-width:100%;}
+  .banner-title{font-size:15px;}
+
+  /* Task rows */
+  .task-row{flex-wrap:wrap;gap:6px;padding:10px 10px;}
+  .task-nm{font-size:14px;}
+  .task-nt{font-size:12px;}
+  .sp{font-size:11px;padding:4px 10px;}
+
+  /* Prices — stack on mobile */
+  .price-actual{flex-wrap:wrap;gap:4px;}
+  .price-input{width:80px;font-size:13px;}
+  .price-sep{display:none;}
+
+  /* Stop actions — full width row */
   .stop-top{flex-wrap:wrap;}
-  .stop-circle{width:32px;height:32px;font-size:14px;}
-  .stop-info{min-width:0;flex:1;}
-  .stop-actions{width:100%;margin-top:8px;padding-top:8px;border-top:1px dashed var(--card-border);}
-  .photo-thumb,.photo-add-btn{width:76px;height:62px;}
-  .tl-thumb,.tl-add-photo{width:84px;height:68px;}
+  .stop-info{flex:1;min-width:0;}
+  .stop-actions{width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--card-border);display:flex;flex-wrap:wrap;gap:6px;}
+  .vbtn{font-size:11px;padding:6px 12px;}
+  .seb{font-size:12px;padding:6px 10px;}
+
+  /* Photos — slightly larger on phone for easier tapping */
+  .photo-thumb,.photo-add-btn{width:80px;height:66px;}
+  .tl-thumb,.tl-add-photo{width:88px;height:72px;}
+
+  /* Timeline */
   .timeline-wrap{padding-left:22px;}
   .tl-dot{left:-18px;width:14px;height:14px;}
   .timeline-line{left:8px;}
-  .banner-title{font-size:15px;}
-  .card{padding:14px 14px;}
-  .stop-card{padding:12px 14px;}
+  .tl-title{font-size:15px;}
+
+  /* Phase header */
+  .phase-name{font-size:15px;}
+  .phase-hdr{flex-wrap:wrap;gap:6px;}
+
+  /* Gear row — wrap price below name */
+  .task-row .owned-toggle{font-size:11px;}
+}
+
+@media(min-width:641px){
+  .bottom-nav{display:none!important;}
 }
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-track{background:var(--bg2);}
@@ -397,9 +475,23 @@ main{max-width:940px;margin:0 auto;padding:28px 16px calc(80px + var(--sab));}
   </div>
 </header>
 
-<main>
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="active" onclick="switchTab('reno')">
+    <span class="bnav-icon">🔧</span><span>Reno</span>
+  </button>
+  <button onclick="switchTab('gear')">
+    <span class="bnav-icon">🎒</span><span>Gear</span>
+  </button>
+  <button onclick="switchTab('journey')">
+    <span class="bnav-icon">🗺️</span><span>Journey</span>
+  </button>
+  <button onclick="switchTab('timeline')">
+    <span class="bnav-icon">📸</span><span>Timeline</span>
+  </button>
+</nav>
 
-<!-- ═══════ RENOVATION ═══════ -->
+<main>
 <div class="tab-content active" id="tab-reno">
   <div class="pg-title">Van Renovation 🔧</div>
   <div class="pg-sub">Phases → tasks → before &amp; after photos</div>
@@ -644,10 +736,13 @@ let milestones=S.get('vp4_milestones',[
 function switchTab(name){
   document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('#bottom-nav button').forEach(el=>el.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
   const idx=['reno','gear','journey','timeline'].indexOf(name);
   document.querySelectorAll('nav button')[idx].classList.add('active');
+  document.querySelectorAll('#bottom-nav button')[idx].classList.add('active');
   if(name==='timeline')renderTimeline();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 // ════════ RENOVATION ══════════════════════════════════════════════
@@ -1122,9 +1217,27 @@ renderPhases();
 renderGear();
 renderStops();
 
-// ════════ SERVICE WORKER (PWA offline support) ═════════════════════
+// ════════ SERVICE WORKER — inline blob, no separate sw.js needed ════
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  const swCode=`
+    const CACHE='vanagon-v2';
+    self.addEventListener('install',e=>{self.skipWaiting();});
+    self.addEventListener('activate',e=>{
+      e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+      self.clients.claim();
+    });
+    self.addEventListener('fetch',e=>{
+      if(e.request.method!=='GET')return;
+      e.respondWith(caches.open(CACHE).then(cache=>
+        cache.match(e.request).then(cached=>cached||fetch(e.request).then(res=>{
+          if(res.ok)cache.put(e.request,res.clone());
+          return res;
+        }))
+      ));
+    });
+  `;
+  const blob=new Blob([swCode],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
 }
 </script>
 </body>
