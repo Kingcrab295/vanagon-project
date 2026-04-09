@@ -22,13 +22,13 @@
           "id": "3q76flr",
           "name": "Surface prep & primer",
           "note": "",
-          "status": "todo"
+          "status": "done"
         },
         {
           "id": "rctzfmp",
           "name": "Full respray decision",
           "note": "Partial or full repaint?",
-          "status": "todo"
+          "status": "done"
         }
       ]
     },
@@ -555,5 +555,5 @@
       "type": "manual"
     }
   ],
-  "syncedAt": "2026-04-09T10:25:43.304Z"
+  "syncedAt": "2026-04-09T10:25:56.714Z"
 }
