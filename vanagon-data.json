@@ -526,9 +526,16 @@
       "title": "Project kickoff! 🚐",
       "date": "2025-01-15",
       "note": "Officially decided to make the Vanagon dream happen. The journey begins.",
-      "photos": [],
+      "photos": [
+        {
+          "id": "s80p0hy",
+          "data": "[photo_local]",
+          "caption": "",
+          "name": "IMG_9990.jpeg"
+        }
+      ],
       "type": "manual"
     }
   ],
-  "syncedAt": "2026-04-09T12:42:47.989Z"
+  "syncedAt": "2026-04-10T01:47:14.576Z"
 }
