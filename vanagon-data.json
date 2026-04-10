@@ -274,50 +274,6 @@
       "actual": 0
     },
     {
-      "id": "s3h2dtr",
-      "cat": "Coffee kit",
-      "name": "Hand grinder (Timemore C3)",
-      "note": "No power needed",
-      "priority": "must",
-      "owned": false,
-      "packed": false,
-      "price": 2490,
-      "actual": 0
-    },
-    {
-      "id": "9ix8stv",
-      "cat": "Coffee kit",
-      "name": "Stovetop gooseneck kettle",
-      "note": "Gas-compatible",
-      "priority": "must",
-      "owned": false,
-      "packed": false,
-      "price": 890,
-      "actual": 0
-    },
-    {
-      "id": "kzaesuh",
-      "cat": "Coffee kit",
-      "name": "Pocket digital scale",
-      "note": "0.1g resolution",
-      "priority": "must",
-      "owned": false,
-      "packed": false,
-      "price": 350,
-      "actual": 0
-    },
-    {
-      "id": "zj5s7o2",
-      "cat": "Coffee kit",
-      "name": "Airtight bean tin",
-      "note": "250–500g",
-      "priority": "must",
-      "owned": false,
-      "packed": false,
-      "price": 190,
-      "actual": 0
-    },
-    {
       "id": "9mwgaqq",
       "cat": "Power & lighting",
       "name": "Portable power station 300Wh",
@@ -559,10 +515,22 @@
           "data": "[photo_local]",
           "caption": "",
           "name": "IMG_0003.jpeg"
+        },
+        {
+          "id": "w5k3x92",
+          "data": "[photo_local]",
+          "caption": "",
+          "name": "IMG_9574.jpeg"
+        },
+        {
+          "id": "gcfrwtc",
+          "data": "[photo_local]",
+          "caption": "",
+          "name": "IMG_9575.jpeg"
         }
       ],
       "type": "manual"
     }
   ],
-  "syncedAt": "2026-04-10T01:50:05.168Z"
+  "syncedAt": "2026-04-10T01:50:54.943Z"
 }
